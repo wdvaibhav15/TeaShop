@@ -1,0 +1,6 @@
+{
+  "name": "Vortex3D - Modern 3D E-Commerce Platform",
+  "description": "A modern, fully responsive 3D e-commerce storefront with interactive product views, rich catalog, cart, wishlist, checkout, orders, dark mode, and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
