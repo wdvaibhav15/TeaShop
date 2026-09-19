@@ -4,12 +4,16 @@ import { Lock, Mail, User, ArrowRight } from "lucide-react";
 import axios from "axios";
 
 
+
+
 const RegisterPage =() => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const navigate = useNavigate();
+ 
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -20,8 +24,10 @@ const RegisterPage =() => {
         password,
         confirmPassword,
       });
-      console.log("Success:", response.data);
+      
+
       if(response.data.success) {
+        
         navigate("/login");
       }
     } catch (error) {

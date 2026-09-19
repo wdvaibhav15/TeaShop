@@ -28,6 +28,7 @@ export const registerUser = async (req, res) => {
     });
 
     await user.save();
+    console.log(user);
 
     const token = await genToken(user._id);
 
@@ -38,9 +39,7 @@ export const registerUser = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    res
-      .status(201)
-      .json({ user, success: true, message: "User registered successfully!" });
+    res.status(201).json({ user, success: true, message: "User registered successfully!" });
   } catch (error) {
     res.status(500).json({
       success: false,

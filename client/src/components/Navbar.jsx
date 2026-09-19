@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
@@ -9,9 +9,29 @@ import {
   Menu,
   ChevronDown,
 } from "lucide-react";
+import { useSelector } from "react-redux";
+
+
 
 const Navbar = () => {
   const [userDropdown, setUserDropdown] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const user = useSelector((state) => state.user.user);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-stone-50/90 dark:bg-stone-950/90 border-b border-stone-200/80 dark:border-stone-800 transition-colors">
       {/* Top Announcement Bar */}
@@ -23,11 +43,12 @@ const Navbar = () => {
 
           <div className="flex items-center gap-4 text-[11px] font-medium ml-auto">
             <button
+              onClick={toggleTheme}
               className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
               aria-label="Toggle dark mode"
             >
               <Moon className="w-3.5 h-3.5" />
-              <span>Theme</span>
+              <span>{theme === "light" ? "Dark" : "Light"}</span>
             </button>
           </div>
         </div>
@@ -129,7 +150,7 @@ const Navbar = () => {
                   <User className="w-3 h-3" />
                 </div>
                 <span className="hidden sm:inline font-medium max-w-[90px] truncate">
-                  Account
+                  {user ? user.name : "Account"}
                 </span>
                 <ChevronDown className="w-3 h-3 text-stone-400" />
               </div>
@@ -137,30 +158,46 @@ const Navbar = () => {
               {/* Dropdown Menu List (Only shows when userDropdownOpen is true) */}
               {userDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xl py-2 z-50">
-                  <Link
-                    to="/register"
-                    onClick={() => setUserDropdown(false)}
-                    className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
-                  >
-                    <User className="w-4 h-4" />
-                    Register
-                  </Link>
-                  <Link
-                    to="/login"
-                    onClick={() => setUserDropdown(false)}
-                    className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
-                  >
-                    <User className="w-4 h-4" />
-                    Login
-                  </Link>
-                  <Link
-                    to="/"
-                    onClick={() => setUserDropdown(false)}
-                    className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
-                  >
-                    <User className="w-4 h-4" />
-                    Logout
-                  </Link>
+                  {!user ? (
+                    <>
+                      <Link
+                        to="/register"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
+                      >
+                        <User className="w-4 h-4" />
+                        Register
+                      </Link>
+
+                      <Link
+                        to="/login"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
+                      >
+                        <User className="w-4 h-4" />
+                        Login
+                      </Link>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      <p className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold">
+                        <User className="w-4 h-4" />
+                        {user.email}
+                      </p>
+
+                      <Link
+                        to="/"
+                        onClick={() => {
+                          dispatch(setUser(null));
+                          setUserDropdown(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2.5 text-xs text-red-600 hover:bg-red-50 font-semibold"
+                      >
+                        <User className="w-4 h-4" />
+                        Logout
+                      </Link>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

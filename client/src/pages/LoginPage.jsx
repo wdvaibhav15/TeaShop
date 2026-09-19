@@ -4,10 +4,14 @@ import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles, User } from "lucide-reac
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
 
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +23,7 @@ const LoginPage = () => {
       });
 
       if (response.data.success) {
+        dispatch(setUser(response.data.user));
         console.log("Login successful:", response.data);
         navigate("/");
       }
