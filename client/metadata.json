@@ -1,0 +1,6 @@
+{
+  "name": "Camellia Leaf Tea Shop",
+  "description": "A modern, responsive tea shop with curated loose leaf teas, customer dashboard, admin portal, and order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
