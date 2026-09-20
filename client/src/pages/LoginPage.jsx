@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles, User } from "lucide-react";
+import {
+  Lock,
+  Mail,
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  User,
+} from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
@@ -16,11 +23,13 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      
-      const response = await axios.post(`${import.meta.env.VITE_CLIENT_API_URL}/api/auth/login`, {
-        email,
-        password
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_CLIENT_API_URL}/api/auth/login`,
+        {
+          email,
+          password,
+        },
+      );
 
       if (response.data.success) {
         dispatch(setUser(response.data.user));
@@ -32,9 +41,6 @@ const LoginPage = () => {
       alert(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
-
-  
-  
 
   return (
     <div className="py-14 max-w-md mx-auto px-4 sm:px-6">
@@ -51,31 +57,11 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* Demo login pills for instant testing */}
-        <div className="bg-stone-50 dark:bg-stone-800/60 p-4 rounded-2xl border border-stone-200 dark:border-stone-700 space-y-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Instant Demo Accounts:</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => fillDemoAccount("customer@teashop.com", "your_customer_password")}
-              className="px-3 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-200 text-xs font-semibold hover:bg-emerald-200 transition-colors flex items-center justify-center gap-1"
-            >
-              <User className="w-3.5 h-3.5" />
-              <span>Customer Demo</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemoAccount("admin@teashop.com", "your_admin_password")}
-              className="px-3 py-2 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 text-xs font-semibold hover:bg-amber-200 transition-colors flex items-center justify-center gap-1"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Demo</span>
-            </button>
-          </div>
-        </div>
+        
+       <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">
+                   <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                   <span>Costomer</span>
+                 </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -109,7 +95,7 @@ const LoginPage = () => {
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-3.5" />
-              
+
               <input
                 type="password"
                 value={password}
@@ -142,6 +128,6 @@ const LoginPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

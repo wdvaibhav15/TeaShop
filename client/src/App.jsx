@@ -29,7 +29,8 @@ import NotFoundPage from "./pages/NotFoundPage";
 import VerifyOTP from "./components/VerifyOTP";
 import NewPass from "./components/NewPass";
 import ResetPassSuccess from "./components/ResetPassSuccess";
-import Registration from "./admin/adminpage/registration.jsx";
+import Login from "./admin/adminpage/Login.jsx";
+import AdminDashboardPage from "./admin/adminpage/AdminDashboardPage.jsx";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -72,9 +73,11 @@ const App = () => {
             <Route path="/payment-success" element={<PaymentSuccessPage />} />
             <Route path="/payment-failure" element={<PaymentFailurePage />} />
             <Route path="*" element={<NotFoundPage />} />
+            
 
             //admin dashboard
-            <Route path="/admin" element={< Registration/>} />
+            <Route path="/admin" element={< Login/>} />
+            <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
 
           </Routes>
         </main>
