@@ -9,5 +9,7 @@ router.post("/forgot-password",sendResetOTP);
 router.post("/verify-otp",verifyOTP);
 router.post("/reset-password",resetPassword);
 
+router.post('/register', adminregisterUser);
+
 export default router;
 

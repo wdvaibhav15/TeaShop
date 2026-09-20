@@ -23,7 +23,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
-import InvoiceModal from "../components/InvoiceModal";
+import InvoiceModal from "../../components/InvoiceModal";
 
 const AdminDashboardPage = () => {
   
@@ -65,14 +65,9 @@ const AdminDashboardPage = () => {
     expiry: "2025-12-31",
   });
 
-  // Store Settings state
-  const [storeSettingsForm, setStoreSettingsForm] = useState({ ...settings });
+
 
   // Calculate high-level stats
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const totalOrdersCount = orders.length;
-  const activeProductsCount = products.length;
-  const totalUsersCount = users.length;
 
   const handleOpenNewProduct = () => {
     setEditingProduct(null);
@@ -209,11 +204,11 @@ const AdminDashboardPage = () => {
       <div className="flex gap-2 overflow-x-auto pb-2 border-b border-stone-200 dark:border-stone-800 text-xs font-semibold">
         {[
           { id: "overview", label: "Overview & Analytics", icon: BarChart3 },
-          { id: "products", label: `Teas & Products (${products.length})`, icon: Package },
-          { id: "orders", label: `Harvest Orders (${orders.length})`, icon: ShoppingBag },
-          { id: "categories", label: `Categories (${categories.length})`, icon: FolderTree },
-          { id: "coupons", label: `Vouchers & Promos (${coupons.length})`, icon: Tag },
-          { id: "users", label: `Registered Patrons (${users.length})`, icon: Users },
+          { id: "products", label: `Teas & Products (products.length)`, icon: Package },
+          { id: "orders", label: `Harvest Orders (orders.length)`, icon: ShoppingBag },
+          { id: "categories", label: `Categories (categories.length)`, icon: FolderTree },
+          { id: "coupons", label: `Vouchers & Promos (coupons.length)`, icon: Tag },
+          { id: "users", label: `Registered Patrons (users.length)`, icon: Users },
           { id: "settings", label: "Store Settings", icon: Settings },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -247,7 +242,7 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="font-serif-tea text-3xl font-bold text-stone-900 dark:text-stone-100">
-                ${totalRevenue.toFixed(2)}
+                totalRevenue
               </div>
               <div className="text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                 <TrendingUp className="w-3.5 h-3.5" />
@@ -263,7 +258,7 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="font-serif-tea text-3xl font-bold text-stone-900 dark:text-stone-100">
-                {totalOrdersCount}
+                totalOrdersCount
               </div>
               <div className="text-[11px] text-stone-400">100% fulfillment SLA met</div>
             </div>
@@ -276,7 +271,7 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="font-serif-tea text-3xl font-bold text-stone-900 dark:text-stone-100">
-                {activeProductsCount}
+                activeProductsCount
               </div>
               <div className="text-[11px] text-stone-400">Across 6 specialty origins</div>
             </div>
@@ -289,7 +284,7 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               <div className="font-serif-tea text-3xl font-bold text-stone-900 dark:text-stone-100">
-                {totalUsersCount}
+                totalUsersCount
               </div>
               <div className="text-[11px] text-stone-400">92% repeat ordering rate</div>
             </div>
@@ -324,7 +319,7 @@ const AdminDashboardPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                  {orders.slice(0, 4).map((order) => (
+                  {/* {orders.slice(0, 4).map((order) => (
                     <tr key={order.id} className="hover:bg-stone-50 dark:hover:bg-stone-800/50">
                       <td className="py-3 font-bold text-stone-900 dark:text-stone-100">
                         {order.id}
@@ -347,7 +342,7 @@ const AdminDashboardPage = () => {
                         ${order.total?.toFixed(2)}
                       </td>
                     </tr>
-                  ))}
+                  ))} */}
                 </tbody>
               </table>
             </div>

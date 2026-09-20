@@ -50,6 +50,14 @@ const Navbar = () => {
               <Moon className="w-3.5 h-3.5" />
               <span>{theme === "light" ? "Dark" : "Light"}</span>
             </button>
+            <Link
+              to="/admin"
+              className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
+              
+            >
+              <User className="w-4 h-4" />
+              <span>Administrator</span>
+            </Link>
           </div>
         </div>
       </div>

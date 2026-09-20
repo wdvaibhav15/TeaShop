@@ -239,8 +239,6 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    console.log("Stored OTP:", user.resetOTP);
-    console.log("Entered OTP:", otp);
 
     if (String(user.resetOTP) !== String(otp)) {
       return res.status(400).json({
