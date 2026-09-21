@@ -5,6 +5,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -31,6 +32,8 @@ import NewPass from "./components/NewPass";
 import ResetPassSuccess from "./components/ResetPassSuccess";
 import Login from "./admin/adminpage/Login.jsx";
 import AdminDashboardPage from "./admin/adminpage/AdminDashboardPage.jsx";
+import Announcement from "./components/Announcement.jsx";
+import AddCoffee from "./admin/adminComponents/AddCoffee.jsx";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -43,46 +46,59 @@ function ScrollToTop() {
   return null;
 }
 
+const AppContent = () => {
+  // Pull isAdmin state from Redux admin slice
+  const isAdmin = useSelector((state) => state.admin.isAdmin);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 selection:bg-emerald-200 selection:text-emerald-950 transition-colors duration-200">
+      <Toast />
+      <Announcement />
+      
+      {/* Hide Navbar when in Admin mode */}
+      {!isAdmin && <Navbar />}
+
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/new-password" element={<NewPass />} />
+          <Route path="/password-reset-success" element={<ResetPassSuccess />} />
+
+          <Route path="/dashboard" element={<UserDashboardPage />} />
+
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-failure" element={<PaymentFailurePage />} />
+
+          {/* Admin routes */}
+          <Route path="/admin" element={<Login />} />
+          <Route path="/admin-dashboard" element={<AdminDashboardPage />} />/
+          <Route path="/addcoffee" element={<AddCoffee />} />
+
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 const App = () => {
   return (
     <Router>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 selection:bg-emerald-200 selection:text-emerald-950 transition-colors duration-200">
-        <Toast />
-        <Navbar />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutUsPage />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/product/:id" element={<ProductDetailsPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/wishlist" element={<WishlistPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/verify-otp" element={<VerifyOTP />} />
-            <Route path="/new-password" element={<NewPass />} />
-            <Route path="/password-reset-success" element={<ResetPassSuccess />} />
-
-            <Route path="/dashboard" element={<UserDashboardPage />} />
-            
-            <Route path="/payment-success" element={<PaymentSuccessPage />} />
-            <Route path="/payment-failure" element={<PaymentFailurePage />} />
-            <Route path="*" element={<NotFoundPage />} />
-            
-
-            //admin dashboard
-            <Route path="/admin" element={< Login/>} />
-            <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
-
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   );
 };
