@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
 const adminSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-
+  
   email: {
     type: String,
     required: true,
@@ -17,6 +13,15 @@ const adminSchema = new mongoose.Schema({
     required: true
   },
 
+  resetOTP: {
+    type: String,
+    default: null
+  },
+
+  otpExpire: {
+    type: Date,
+    default: null
+  }
 }, {
   timestamps: true
 });

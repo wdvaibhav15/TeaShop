@@ -11,6 +11,8 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoute.js';
+import adminRoutes from './routes/adminRoutes.js';
+import addCups from './routes/AddCups.js';
 
 // Connect to Database
 connectDB();
@@ -30,8 +32,15 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-// Routes
+// User Routes
 app.use('/api/auth', authRoutes);
+
+//Admin Routes
+app.use('/api/admin', adminRoutes);
+
+//Add coffee
+app.use('/api/coffee', addCups);
+
 
 const PORT = process.env.PORT || 3000;
 
