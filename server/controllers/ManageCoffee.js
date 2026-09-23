@@ -9,7 +9,6 @@ export const addCoffee = async (req, res) => {
 
     let imageUrl = "";
 
-    // If file was uploaded by Multer, upload it to Cloudinary
     if (req.file) {
       const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
       if (cloudinaryResponse) {
@@ -43,7 +42,7 @@ export const addCoffee = async (req, res) => {
 // DELETE CUP
 export const deleteCoffee = async (req, res) => {
   try {
-    const { id } = req.body; // or req.params.id depending on route strategy
+    const { id } = req.body;
     const coffeeId = id || req.params.id;
 
     const deletedCoffee = await Coffee.findByIdAndDelete(coffeeId);

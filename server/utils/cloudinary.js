@@ -14,18 +14,11 @@ const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
 
-    console.log("Cloudinary Config:");
-    console.log("Cloud Name:", process.env.CLOUDINARY_NAME);
-    console.log("API Key:", process.env.CLOUDINARY_API_KEY);
-    console.log("File Path:", localFilePath);
 
     const result = await cloudinary.uploader.upload(localFilePath, {
       folder: "coffee_items",
       resource_type: "auto",
     });
-
-    console.log("Cloudinary Upload Success:");
-    console.log(result.secure_url);
 
     if (fs.existsSync(localFilePath)) {
       fs.unlinkSync(localFilePath);
