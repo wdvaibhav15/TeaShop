@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 
-const coffeeSchema = new mongoose.Schema({
+const coffeeSchema = new mongoose.Schema(
+  {
     coffeeTitle: {
       type: String,
-      required: true,
+      required: [true, 'Coffee title is required'],
       trim: true,
       maxlength: [100, 'Title cannot exceed 100 characters'],
     },
 
     price: {
       type: Number,
-      required: true,
+      required: [true, 'Price is required'],
       min: [0, 'Price must be a positive number'],
     },
 
@@ -36,9 +37,13 @@ const coffeeSchema = new mongoose.Schema({
       type: Boolean,
       default: true,
     },
-  }, {timestamps: true,}
+  },
+  { 
+    timestamps: true 
+  }
 );
 
-const Coffee = mongoose.model('Coffee', coffeeSchema);
+// Check if model already exists to prevent overwrite errors in development/reloads
+const Coffee = mongoose.models.CoffeeCup || mongoose.model('CoffeeCup', coffeeSchema);
 
 export default Coffee;

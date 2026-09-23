@@ -1,9 +1,21 @@
-import Coffee from "../models/CoffeeCup.js";
 
-//ADD CUPS
+import Coffee from "../models/CoffeeCup.js";
+import uploadOnCloudinary from "../utils/cloudinary.js";
+
+// ADD CUPS
 export const addCoffee = async (req, res) => {
   try {
-    const { coffeeTitle, title, price, stockCount, description, imageUrl } = req.body;
+    const { coffeeTitle, title, price, stockCount, description } = req.body;
+
+    let imageUrl = "";
+
+    // If file was uploaded by Multer, upload it to Cloudinary
+    if (req.file) {
+      const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+      if (cloudinaryResponse) {
+        imageUrl = cloudinaryResponse.secure_url;
+      }
+    }
 
     const newCoffee = new Coffee({
       coffeeTitle: coffeeTitle || title, 
@@ -30,10 +42,20 @@ export const addCoffee = async (req, res) => {
 
 // DELETE CUP
 export const deleteCoffee = async (req, res) => {
-    try {
-        const deletedCoffee = await Coffee.findByIdAndDelete(req.params.id);
-        res.status(200).json({message: "Coffee Deleted Successfully"},deletedCoffee);
-    } catch (error) {
-        res.status(500).json(error);
-    }
+  try {
+    const { id } = req.body; // or req.params.id depending on route strategy
+    const coffeeId = id || req.params.id;
+
+    const deletedCoffee = await Coffee.findByIdAndDelete(coffeeId);
+    return res.status(200).json({
+      message: "Coffee Deleted Successfully",
+      success: true,
+      data: deletedCoffee
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to delete coffee"
+    });
+  }
 };

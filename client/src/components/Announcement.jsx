@@ -26,19 +26,9 @@ const Announcement = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const handleRoleToggle = () => {
-    dispatch(toggleAdminRole());
-    if (isAdmin) {
-      navigate('/');
-    } else {
-      navigate('/admin');
-    }
-  };
+  
 
-  const handleLogout = () => {
-    dispatch(toggleAdminRole());
-    navigate('/');
-  }
+  
 
   return (
     <div className="sticky top-0 z-50 h-8 w-full bg-emerald-900 text-stone-200 text-xs px-4 flex items-center border-b border-emerald-800/50 shadow-sm">
@@ -53,7 +43,7 @@ const Announcement = () => {
 
         <div className="flex items-center gap-4 text-[11px] font-medium ml-auto">
           {/* Theme Toggle */}
-          {!isAdmin ? (
+          
             <button
             onClick={toggleTheme}
             className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
@@ -67,28 +57,17 @@ const Announcement = () => {
             )}
             <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
           </button>
-          ) : (
-            <button
-            onClick={handleLogout}
-            className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
-            aria-label="Toggle dark mode"
-            type="button"
-          >
-            <span className="flex items-center gap-1"><User className="w-4 h-4" />Logout/Back to User</span>
-          </button>
-          )}
+          
 
           {/* Administrator / User Toggle Button */}
           <button
             type="button"
-            onClick={handleRoleToggle}
+            
             className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
           >
-            {isAdmin ? (
-              ""
-            ) : (
-              <span className="flex items-center gap-1"><User className="w-4 h-4" />Admin</span>
-            )}
+            
+              <span className="flex items-center gap-1"><User className="w-4 h-4" />Costomer</span>
+            
             
             
           </button>

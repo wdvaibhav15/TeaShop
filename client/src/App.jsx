@@ -30,10 +30,8 @@ import NotFoundPage from "./pages/NotFoundPage";
 import VerifyOTP from "./components/VerifyOTP";
 import NewPass from "./components/NewPass";
 import ResetPassSuccess from "./components/ResetPassSuccess";
-import Login from "./admin/adminpage/Login.jsx";
-import AdminDashboardPage from "./admin/adminpage/AdminDashboardPage.jsx";
+
 import Announcement from "./components/Announcement.jsx";
-import AddCoffee from "./admin/adminComponents/AddCoffee.jsx";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -81,10 +79,7 @@ const AppContent = () => {
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-failure" element={<PaymentFailurePage />} />
 
-          {/* Admin routes */}
-          <Route path="/admin" element={<Login />} />
-          <Route path="/admin-dashboard" element={<AdminDashboardPage />} />/
-          <Route path="/addcoffee" element={<AddCoffee />} />
+          
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

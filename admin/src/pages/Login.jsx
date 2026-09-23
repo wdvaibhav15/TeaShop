@@ -22,7 +22,7 @@ const Login = () => {
         email,
         password
       });
-      console.log(response.data);
+      
       if (response.data.success) {
         console.log("Login successful:", response.data);
         navigate("/admin-dashboard");

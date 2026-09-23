@@ -25,13 +25,12 @@ const RegisterPage =() => {
         confirmPassword,
       });
       
-
+      console.log(response.data);
       if(response.data.success) {
         
         navigate("/login");
       }
     } catch (error) {
-      // This will print the precise error message sent by your backend database/server
       console.error("Server Error Response:", error.response?.data);
     }
   };

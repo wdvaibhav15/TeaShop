@@ -23,7 +23,7 @@ const Registration =() => {
         password,
         confirmPassword,
       });
-      console.log(response.data);
+      console.log("Registration successful",response.data);
 
       if(response.data.success) {
         
