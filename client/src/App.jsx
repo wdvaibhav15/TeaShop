@@ -32,6 +32,7 @@ import NewPass from "./components/NewPass";
 import ResetPassSuccess from "./components/ResetPassSuccess";
 
 import Announcement from "./components/Announcement.jsx";
+import MenuCard from "./components/MenuCard.jsx";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -60,8 +61,8 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/shop" element={<ShopPage />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/shop" element={<MenuCard />} />
+          <Route path="/order/:id" element={<ProductDetailsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />

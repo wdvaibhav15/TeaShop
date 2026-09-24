@@ -57,16 +57,12 @@ const Navbar = () => {
             </Link>
             <Link
               to="/shop"
+              
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
             >
-              Shop All
+              Menu Card
             </Link>
-            <div className="relative group">
-              <button className="flex items-center gap-1 hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors py-2">
-                Categories
-                <ChevronDown className="w-3.5 h-3.5 text-stone-400 transition-transform" />
-              </button>
-            </div>
+            
             <Link
               to="/about"
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"

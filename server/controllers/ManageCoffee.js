@@ -1,4 +1,4 @@
-
+import mongoose from "mongoose";
 import Coffee from "../models/CoffeeCup.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 
@@ -54,6 +54,43 @@ export const getCoffeeData = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to retrieve coffee items',
+      error: error.message,
+    });
+  }
+};
+
+// GET DATA BY ID
+
+export const getCoffeeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid coffee ID format",
+      });
+    }
+
+    const coffee = await Coffee.findById(id);
+    if (!coffee) {
+      return res.status(404).json({
+        success: false,
+        message: "Coffee item not found",
+      });
+    }
+
+    
+    return res.status(200).json({
+      success: true,
+      coffee: coffee,
+    });
+  } catch (error) {
+    console.error("Error fetching single coffee:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve coffee details",
       error: error.message,
     });
   }
