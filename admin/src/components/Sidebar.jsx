@@ -8,6 +8,7 @@ import {
   Settings,
   Plus
 } from 'lucide-react';
+import MenuCard from './MenuCard';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   return (
@@ -87,6 +88,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             <div className="flex items-center gap-3">
               <Coffee className="w-4 h-4" />
               <span>Coffee & Menu</span>
+              
             </div>
           </button>
 

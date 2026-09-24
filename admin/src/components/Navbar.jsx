@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Sparkles, Plus, Bell, ChevronDown, ShieldCheck, LogOut, User, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import AddCoffee from './AddCoffee';
 
 const Navbar = ({ activePage = 'Overview' }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('false');
 
 
   // Logout handler function
@@ -17,7 +15,7 @@ const Navbar = ({ activePage = 'Overview' }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     // Redirect user to the login screen
-    navigate('/login');
+    navigate('/');
   };
 
   return (

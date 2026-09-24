@@ -50,7 +50,7 @@ const AdminWelcome = () => {
           <button
             type="button"
             onClick={() => navigate("/registration")}
-            className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl bg-[#172D23] hover:bg-[#234938] text-white font-semibold text-sm border border-[#264436] hover:border-[#3A6B53] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl bg-[#172D23] hover:bg-[#234938] text-white font-semibold text-sm border border-[#264436] hover:border-[#3A6B53] transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-[#A1B8AD]" />
             <span>Register Store</span>
@@ -60,7 +60,7 @@ const AdminWelcome = () => {
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl bg-[#C88A4B] hover:bg-[#B77B3F] text-[#14261E] font-semibold text-sm transition-all shadow-lg hover:shadow-[#C88A4B]/20 active:scale-[0.98] flex items-center justify-center gap-2 group"
+            className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl bg-[#C88A4B] hover:bg-[#B77B3F] text-[#14261E] font-semibold text-sm transition-all shadow-lg hover:shadow-[#C88A4B]/20 active:scale-[0.98] flex items-center justify-center gap-2 group cursor-pointer"
           >
             <span>Admin Login</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

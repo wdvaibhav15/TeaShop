@@ -39,6 +39,26 @@ export const addCoffee = async (req, res) => {
   }
 };
 
+// GET DATA
+export const getCoffeeData = async (req, res) => {
+  try {
+    const coffees = await Coffee.find().sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: coffees.length,
+      coffees: coffees,
+    });
+  } catch (error) {
+    console.error('Error fetching coffees:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve coffee items',
+      error: error.message,
+    });
+  }
+};
+
 // DELETE CUP
 export const deleteCoffee = async (req, res) => {
   try {
