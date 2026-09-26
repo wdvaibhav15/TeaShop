@@ -66,7 +66,7 @@ const Announcement = () => {
             className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
           >
             
-              <span className="flex items-center gap-1"><User className="w-4 h-4" />Costomer</span>
+              <span className="flex items-center gap-1"><User className="w-4 h-4" />Customer</span>
             
             
             

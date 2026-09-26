@@ -55,7 +55,7 @@ const AppContent = () => {
       <Announcement />
       
       {/* Hide Navbar when in Admin mode */}
-      {!isAdmin && <Navbar />}
+      <Navbar />
 
       <main className="flex-1">
         <Routes>
