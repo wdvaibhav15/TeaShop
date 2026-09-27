@@ -3,7 +3,6 @@ import { Mail, Phone, MapPin, Clock, Send, MessageSquare, CheckCircle2 } from "l
 
 
 const ContactPage = () => {
-  
 
   const [formData, setFormData] = useState({
     name: "",
