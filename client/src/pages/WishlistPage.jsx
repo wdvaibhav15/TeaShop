@@ -1,92 +1,38 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromWishlist } from "../redux/wishlistSlice";
+import { addToCart } from "../redux/cartSlice";
 import { Link } from "react-router-dom";
-import {
-  Heart,
-  ShoppingBag,
-  Trash2,
-  ArrowRight,
-  Check,
-} from "lucide-react";
+import { Heart,ShoppingBag, Trash2, ArrowRight, Check,} from "lucide-react";
 
 const WishlistPage = () => {
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: 1,
-      name: "Darjeeling Tea",
-      category: "Black Tea",
-      description: "Premium tea from Darjeeling hills.",
-      price: 34,
-      image:
-        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 2,
-      name: "Matcha Green Tea",
-      category: "Matcha",
-      description: "Rich and smooth ceremonial matcha.",
-      price: 48,
-      image:
-        "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 3,
-      name: "Oolong Reserve",
-      category: "Oolong",
-      description: "Floral aroma with a naturally sweet finish.",
-      price: 42,
-      image:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 4,
-      name: "Assam Gold",
-      category: "Black Tea",
-      description: "Strong and malty tea from Assam estates.",
-      price: 29,
-      image:
-        "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 5,
-      name: "White Peony",
-      category: "White Tea",
-      description: "Light floral tea with delicate sweetness.",
-      price: 39,
-      image:
-        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 6,
-      name: "Jasmine Green",
-      category: "Green Tea",
-      description: "Fresh green tea scented with jasmine blossoms.",
-      price: 32,
-      image:
-        "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?auto=format&fit=crop&w=800&q=80",
-    },
-  ]);
+  const dispatch = useDispatch();
+
+const wishlistItems = useSelector((state) => state.wishlist.wishlistItems );
 
   const [toastMessage, setToastMessage] = useState("");
 
   const handleRemove = (id) => {
-    setWishlistItems((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
+  dispatch(removeFromWishlist(id));
 
-    setToastMessage("Item removed from wishlist");
+  setToastMessage("Item removed from wishlist");
 
-    setTimeout(() => {
-      setToastMessage("");
-    }, 3000);
-  };
+  setTimeout(() => {
+    setToastMessage("");
+  }, 3000);
+};
 
   const handleOrderNow = (product) => {
-    setToastMessage(`${product.name} added for checkout`);
+  dispatch(addToCart(product));
 
-    setTimeout(() => {
-      setToastMessage("");
-    }, 3000);
-  };
+  setToastMessage(
+    `${product.coffeeTitle || product.name} added to cart`
+  );
+
+  setTimeout(() => {
+    setToastMessage("");
+  }, 3000);
+};
 
   return (
     <div className="min-h-screen bg-black py-12">
@@ -106,7 +52,7 @@ const WishlistPage = () => {
             Personal Tea Cellar
           </span>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mt-5">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mt-5">
             SAVED WISHLIST ({wishlistItems.length})
           </h1>
 
@@ -143,7 +89,7 @@ const WishlistPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {wishlistItems.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 className="
                   bg-black
                   border
@@ -157,18 +103,18 @@ const WishlistPage = () => {
                 "
               >
                 <img
-                  src={product.image}
+                  src={product.imageUrl || product.image}
                   alt={product.name}
                   className="w-full h-40 object-cover"
                 />
 
                 <div className="p-4">
                   <p className="text-emerald-500 uppercase text-xs tracking-widest mb-2">
-                    {product.category}
+                    {product.category || "Coffee"}
                   </p>
 
                   <h3 className="text-xl font-bold text-white mb-2">
-                    {product.name}
+                    {product.coffeeTitle || product.name}
                   </h3>
 
                   <p className="text-stone-400 text-sm mb-4 min-h-[40px]">
@@ -209,7 +155,7 @@ const WishlistPage = () => {
                     </button>
 
                     <button
-                      onClick={() => handleRemove(product.id)}
+                      onClick={() => handleRemove(product._id)}
                       className="
                         w-11
                         h-11

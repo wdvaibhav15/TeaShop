@@ -9,6 +9,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
+import { FaHeart } from "react-icons/fa";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const user = useSelector((state) => state.user?.user);
   const navigate = useNavigate();
+  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -57,12 +59,11 @@ const Navbar = () => {
             </Link>
             <Link
               to="/shop"
-              
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
             >
               Menu Card
             </Link>
-            
+
             <Link
               to="/about"
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
@@ -96,7 +97,18 @@ const Navbar = () => {
               className="relative p-2 text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center"
               aria-label="Wishlist"
             >
-              <Heart className="w-5 h-5" />
+              <div
+                onClick={() => navigate("/wishlist")}
+                className="relative cursor-pointer"
+              >
+                <FaHeart size={22} />
+
+                {wishlistItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </div>
             </Link>
 
             <Link

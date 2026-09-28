@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 export default function CategoriesSection() {
   
+  
 
   return (
     <section className="py-16 md:py-20 bg-stone-50/50 dark:bg-stone-900/30">

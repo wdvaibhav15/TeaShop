@@ -46,8 +46,6 @@ function ScrollToTop() {
 }
 
 const AppContent = () => {
-  // Pull isAdmin state from Redux admin slice
-  const isAdmin = useSelector((state) => state.admin.isAdmin);
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 selection:bg-emerald-200 selection:text-emerald-950 transition-colors duration-200">

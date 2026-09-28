@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Star, ShoppingBag, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
+import {
+  Star,
+  ShoppingBag,
+  CheckCircle2,
+  AlertCircle,
+  ChevronRight,
+} from "lucide-react";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
@@ -13,6 +19,105 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  const handleOrderNow = async () => {
+    try {
+      setIsProcessingPayment(true);
+
+      const totalAmount = Number(price) * quantity;
+
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_CLIENT_API_URL}/api/payment/create-order`,
+        {
+          amount,
+          coffeeId,
+          quantity,
+          userId,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (!data.success) {
+        alert("Unable to initialize payment");
+        return;
+      }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+        amount: data.order.amount,
+
+        currency: data.order.currency,
+
+        order_id: data.order.id,
+
+        name: "Tea & Coffee Shop",
+
+        description: `${quantity} x ${title}`,
+
+        image: image,
+
+        handler: async function (response) {
+          try {
+            const verify = await axios.post(
+              `${import.meta.env.VITE_CLIENT_API_URL}/api/payment/verify-payment`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+
+                razorpay_payment_id: response.razorpay_payment_id,
+
+                razorpay_signature: response.razorpay_signature,
+              },
+            );
+
+            if (verify.data.success) {
+              alert("Payment Successful");
+
+              navigate(`/order-success/${response.razorpay_payment_id}`);
+            } else {
+              alert("Payment Verification Failed");
+            }
+          } catch (err) {
+            console.log(err);
+            alert("Verification Error");
+          }
+        },
+
+        prefill: {
+          name: "Customer",
+          email: "customer@example.com",
+        },
+
+        theme: {
+          color: "#065f46",
+        },
+
+        modal: {
+          ondismiss: () => {
+            setIsProcessingPayment(false);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.open();
+
+      razorpay.on("payment.failed", function (response) {
+        alert(response.error.description);
+      });
+    } catch (error) {
+      console.log(error);
+
+      alert(error.response?.data?.message || "Failed to start payment");
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -21,20 +126,24 @@ const ProductDetailsPage = () => {
         setError(null);
 
         // Fallback to localhost:3000 if env variable is undefined
-        const baseUrl = import.meta.env.VITE_CLIENT_API_URL || "http://localhost:3000";
+        const baseUrl =
+          import.meta.env.VITE_CLIENT_API_URL || "http://localhost:3000";
 
         const response = await axios.get(
           `${baseUrl}/api/coffee/get-coffees/${id}`,
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         // Safely extract the coffee item from backend response wrapper
-        const data = response.data.coffee || response.data.data || response.data;
+        const data =
+          response.data.coffee || response.data.data || response.data;
         setProduct(data);
       } catch (err) {
         console.error("Error fetching product details:", err);
         setError(
-          err.response?.data?.message || err.message || "Failed to load coffee details."
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to load coffee details.",
         );
       } finally {
         // FIXED: Runs on BOTH success and error to prevent infinite loading
@@ -71,7 +180,9 @@ const ProductDetailsPage = () => {
       <div className="py-20 max-w-md mx-auto text-center px-4">
         <div className="p-6 bg-red-50 dark:bg-stone-850 rounded-2xl border border-red-200 dark:border-stone-700">
           <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
-          <h2 className="text-lg font-bold text-red-600 mb-1">Coffee Not Found</h2>
+          <h2 className="text-lg font-bold text-red-600 mb-1">
+            Coffee Not Found
+          </h2>
           <p className="text-xs text-stone-600 dark:text-stone-400 mb-4">
             {error || "Item does not exist."}
           </p>
@@ -87,7 +198,8 @@ const ProductDetailsPage = () => {
   }
 
   // Safe normalized variables for display
-  const title = product.title || product.coffeeTitle || product.name || "Specialty Brew";
+  const title =
+    product.title || product.coffeeTitle || product.name || "Specialty Brew";
   const image = product.image || product.imageUrl || DEFAULT_IMAGE;
   const stock = Number(product.stock ?? product.stockCount ?? 0);
   const inStock = stock > 0;
@@ -153,7 +265,9 @@ const ProductDetailsPage = () => {
           {/* Rating */}
           <div className="flex items-center gap-1.5 text-amber-500 text-sm">
             <Star className="w-4 h-4 fill-current" />
-            <span className="font-bold text-stone-900 dark:text-stone-100">{rating}</span>
+            <span className="font-bold text-stone-900 dark:text-stone-100">
+              {rating}
+            </span>
             <span className="text-stone-400 text-xs ml-1">(Rating)</span>
           </div>
 
@@ -166,7 +280,6 @@ const ProductDetailsPage = () => {
           <h1 className="font-serif text-xl font-medium text-stone-900 dark:text-stone-100 tracking-tight leading-tight">
             {product.description}
           </h1>
-
 
           {/* Price & Stock Status */}
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900 dark:bg-stone-850 border border-stone-200/80 dark:border-stone-800">
@@ -226,13 +339,14 @@ const ProductDetailsPage = () => {
                 <ShoppingBag className="w-4 h-4" />
                 <span>{inStock ? "Add to Bag" : "Out of Stock"}</span>
               </button>
-
             </div>
 
-            <button 
-                onClick={()=>naviagte(`/order/${item._id}`)}
-                className="flex-1 w-full mt-8 py-3.5 px-6 rounded-2xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all">
-                Order Now
+            <button
+              onClick={handleOrderNow}
+              disabled={!inStock || isProcessingPayment}
+              className="flex-1 w-full mt-8 py-3.5 px-6 rounded-2xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all"
+            >
+              {isProcessingPayment ? "Processing..." : "Pay Now"}
             </button>
           </div>
         </div>

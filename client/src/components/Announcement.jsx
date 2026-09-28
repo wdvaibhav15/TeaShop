@@ -2,15 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Moon, Sun, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; 
-import { toggleAdminRole } from '../redux/adminSlice';
 
 const Announcement = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const isAdmin = useSelector((state) => state.admin.isAdmin);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -33,13 +29,13 @@ const Announcement = () => {
   return (
     <div className="sticky top-0 z-50 h-8 w-full bg-emerald-900 text-stone-200 text-xs px-4 flex items-center border-b border-emerald-800/50 shadow-sm">
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-        {isAdmin ?(
+        
           <div className="flex ml-70 items-center gap-2 truncate">
           <span>🌿 Free shipping on orders over $50</span>
         </div>
-        ) : (<div className="flex items-center gap-2 truncate">
+        <div className="flex items-center gap-2 truncate">
           <span>🌿 Free shipping on orders over $50</span>
-        </div>)}
+        </div>
 
         <div className="flex items-center gap-4 text-[11px] font-medium ml-auto">
           {/* Theme Toggle */}
