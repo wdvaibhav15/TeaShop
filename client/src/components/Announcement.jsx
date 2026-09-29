@@ -30,7 +30,7 @@ const Announcement = () => {
     <div className="sticky top-0 z-50 h-8 w-full bg-emerald-900 text-stone-200 text-xs px-4 flex items-center border-b border-emerald-800/50 shadow-sm">
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
         
-          <div className="flex ml-70 items-center gap-2 truncate">
+          <div className="flex items-center gap-2 truncate">
           <span>🌿 Free shipping on orders over $50</span>
         </div>
         <div className="flex items-center gap-2 truncate">

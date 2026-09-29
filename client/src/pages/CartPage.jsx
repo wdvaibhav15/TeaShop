@@ -1,12 +1,13 @@
 import React from "react";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { removeFromCart, increaseQty, decreaseQty } from "../redux/cartSlice";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   const totalPrice = cartItems.reduce(
@@ -29,8 +30,8 @@ const CartPage = () => {
           </p>
 
           <button
-            onClick={() => navigate("/menu")}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl"
+            onClick={() => navigate("/shop")}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl cursor-pointer transition-colors"
           >
             Browse Menu
           </button>

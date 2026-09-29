@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
-import axios from "axios";
 import VanillaTilt from "vanilla-tilt";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setItems, setLoading, setError } from "../redux/productSlice.js";
-import { addToCart } from "../redux/cartSlice.js";
-import { FaHeart } from "react-icons/fa";
+
+import { addToCart } from "../redux/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistSlice";
+
+import { FaHeart } from "react-icons/fa";
+
+import useProductsData from "../hooks/useProductsData";
 
 const TiltCard = ({ children, className }) => {
   const tiltRef = useRef(null);
@@ -38,44 +40,13 @@ const MenuCard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Redux State
-  const { items, loading, error } = useSelector((state) => state.product);
+  // Data comes from custom hook
+  const { items, loading, error } = useProductsData();
+
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
   const DEFAULT_IMAGE =
     "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
-
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        dispatch(setLoading(true));
-        dispatch(setError(null));
-
-        const response = await axios.get(
-          `${import.meta.env.VITE_CLIENT_API_URL}/api/coffee/get-coffees`,
-          {
-            withCredentials: true,
-          },
-        );
-
-        const coffees = response.data.coffees || response.data || [];
-
-        dispatch(setItems(coffees));
-      } catch (err) {
-        dispatch(
-          setError(
-            err.response?.data?.message ||
-              err.message ||
-              "Something went wrong",
-          ),
-        );
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-
-    fetchMenuItems();
-  }, [dispatch]);
 
   const handleWishlist = (item) => {
     const exists = wishlistItems.find((product) => product._id === item._id);
@@ -91,7 +62,6 @@ const MenuCard = () => {
     dispatch(addToCart(item));
   };
 
-  // Loading UI
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto p-6 text-center">
@@ -100,154 +70,106 @@ const MenuCard = () => {
     );
   }
 
-  // Error UI
   if (error) {
     return (
       <div className="max-w-7xl mx-auto p-6 text-center text-red-500">
-        <p>Error: {error}</p>
-
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg"
-        >
-          Retry
-        </button>
+        <p>{error}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* Header Section */}
-      <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold text-white mb-2">Coffee & Menu</h1>
-        <p className="text-gray-400 text-base max-w-4xl mx-auto leading-relaxed">
+      <div className="mb-14 text-center">
+        <h1 className="text-3xl font-bold text-white mb-4">Coffee & Menu</h1>
+
+        <p className="text-gray-400 text-base max-w-4xl mx-auto">
           Explore our carefully curated selection of handcrafted brews,
-          artisanal roasts, and signature blends. Every cup is freshly prepared
-          with premium beans to bring you rich flavors and the perfect start to
-          your day.
+          artisanal roasts, and signature blends.
         </p>
       </div>
 
-      {/* Grid Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items && items.length > 0 ? (
-          items.map((item) => {
-            const stock = item.stockCount ?? item.stock ?? 0;
-            const inStock = stock > 0 && item.isAvailable !== false;
-            const title = item.coffeeTitle || item.title || item.name;
+      <div className="grid mt-[-2rem] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {items?.map((item) => {
+          const stock = item.stockCount ?? item.stock ?? 0;
 
-            return (
-              <TiltCard
-                key={item._id || item.id}
-                className="bg-white w-95 h-120 mb-6 rounded-2xl shadow-md hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col justify-between transform-gpu"
-              >
-                {/* Image Section */}
-                <div className="relative w-full h-64 bg-gray-100 overflow-hidden">
+          const inStock = stock > 0 && item.isAvailable !== false;
+
+          const title = item.coffeeTitle || item.title || item.name;
+
+          return (
+            <TiltCard
+              key={item._id}
+              className="w-90 h-130 bg-gradient-to-b from-stone-900 to-black rounded-3xl overflow-hidden border border-stone-700 hover:border-emerald-500 hover:-translate-y-2 transition-all duration-300 shadow-xl "
+            >
+              <div className="relative">
+                <div className="relative overflow-hidden h-60">
                   <img
                     src={item.imageUrl || item.image || DEFAULT_IMAGE}
                     alt={title}
-                    className="w-full h-full object-cover object-center"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = DEFAULT_IMAGE;
-                    }}
+                    className=" w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                   />
-                  <span
-                    className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-md ${
-                      inStock
-                        ? "bg-emerald-500/90 text-white"
-                        : "bg-rose-500/90 text-white"
-                    }`}
-                  >
-                    {inStock ? `${stock} in stock` : "Out of Stock"}
-                  </span>
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 </div>
+              </div>
 
-                {/* Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+              <div className="p-5">
+                <h3 className="text-2xl font-bold text-white">{title}</h3>
+
+                <p className="text-stone-400 text-sm mt-2 line-clamp-3">
+                  {item.description}
+                </p>
+
+                <div className="flex justify-between items-start mt-4">
+                  {/* Left Side */}
                   <div>
-                    {/* Title & Rating */}
-                    <div className="flex justify-between items-start mb-2 gap-2">
-                      <h3 className="text-xl font-bold text-gray-800 line-clamp-1">
-                        {title}
-                      </h3>
+                    <p className="text-stone-400 text-xs mb-1">Price</p>
 
-                      <div className="flex items-center bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg shrink-0">
-                        <span className="text-amber-500 mr-1">★</span>
-                        <span className="text-xs font-bold text-amber-700">
-                          {item.rating ? Number(item.rating).toFixed(1) : "N/A"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {item.description || "No description available."}
-                    </p>
+                    <span className="text-3xl font-black text-white">
+                      ₹{item.price}
+                    </span>
                   </div>
 
-                  {/* Price & Add to Bag */}
-                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-4">
-                    <div>
-                      <span className="text-xs text-gray-400 block font-medium">
-                        Price
-                      </span>
-                      <span className="text-2xl font-black text-gray-900">
-                        ${item.price}
-                      </span>
-                    </div>
+                  {/* Right Side */}
+                  <div className="flex flex-col items-end gap-3">
                     <FaHeart
-                      size={25}
+                      size={24}
                       onClick={() => handleWishlist(item)}
-                      className={`ml-15 mt-5 cursor-pointer transition-all ${
+                      className={`cursor-pointer transition-all duration-300 ${
                         wishlistItems.some(
                           (product) => product._id === item._id,
                         )
-                          ? "text-red-600"
+                          ? "text-red-500"
                           : "text-gray-400"
                       }`}
                     />
+
                     <button
-                      disabled={!inStock}
                       onClick={() => handleAddToCart(item)}
-                      className={`mt-5 flex items-center justify-center gap-2 font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer  ${
+                      disabled={!inStock}
+                      className={`px-5 py-2font-semibold transition-all duration-300 rounded-xl
+                      ${
                         inStock
-                          ? "bg-slate-900 hover:bg-emerald-600 text-white shadow-md hover:shadow-lg active:scale-95"
-                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          ? "bg-white text-black hover:bg-emerald-500 hover:text-white"
+                          : "bg-gray-700 text-gray-400 cursor-not-allowed "
                       }`}
                     >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                        />
-                      </svg>
-                      {inStock ? "Add to Bag" : "Sold Out"}
+                      Add To Cart
                     </button>
                   </div>
                 </div>
+
                 <button
                   onClick={() => navigate(`/order/${item._id}`)}
-                  className="text-gray-200 font-semibold py-2.5 px-5 rounded-xl bg-slate-950 hover:bg-emerald-600 transition-all duration-200 ml-2 mr-2 mb-1 cursor-pointer"
+                  className=" w-full mt-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all duration-300 "
                 >
                   Order Now
                 </button>
-              </TiltCard>
-            );
-          })
-        ) : (
-          <p className="col-span-full text-center text-gray-500 py-12">
-            No menu items found in database.
-          </p>
-        )}
+              </div>
+            </TiltCard>
+          );
+        })}
       </div>
     </div>
   );
