@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import AddCoffee from "../components/AddCoffee";
 import MenuCard from "../components/MenuCard";
+import FeedbackTable from "../components/FeedBackTable";
 
 const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -48,9 +49,11 @@ const AdminDashboardPage = () => {
           </div>
         )}
 
-        {activeTab === "inventory" && (
+        {activeTab === "UserFeedback" && (
           <div>
-            <h2 className="text-xl font-bold">Inventory & Beans</h2>
+            
+              <FeedbackTable />
+            
           </div>
         )}
 

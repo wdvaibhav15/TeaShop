@@ -1,5 +1,5 @@
 import express from 'express';
-import { adminLogin, adminLogout, adminRegister, adminSendResetOTP, adminVerifyOTP, adminVesetPassword } from '../controllers/adminController.js';
+import { adminLogin, adminLogout, adminRegister, adminSendResetOTP, adminVerifyOTP, adminVesetPassword, deleteFeedback, getAllFeedbacks, userFeedback } from '../controllers/adminController.js';
 
 
 const router = express.Router();
@@ -10,6 +10,11 @@ router.get('/logout', adminLogout);
 router.post("/forgot-password",adminSendResetOTP);
 router.post("/verify-otp",adminVerifyOTP);
 router.post("/reset-password",adminVesetPassword);
+
+router.post("/userfeedback", userFeedback);
+router.get("/userfeedback", getAllFeedbacks);
+router.delete("/userfeedback/:id", deleteFeedback);
+
 
 
 

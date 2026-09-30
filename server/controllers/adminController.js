@@ -2,11 +2,14 @@ import bcrypt from "bcryptjs";
 import Admin from "../models/Admin.js";
 import genToken from "../utils/token.js";
 import nodemailer from "nodemailer";
+import UserFeedBack from "../models/UserFeedBack.js";
+
+
 
 // LOGIN REGISTRATION
 export const adminRegister = async (req, res) => {
   try {
-    const  { email, password, confirmPassword } = req.body;
+    const { email, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
       return res
@@ -36,7 +39,9 @@ export const adminRegister = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    res.status(201).json({ user, success: true, message: "Admin registered successfully!" });
+    res
+      .status(201)
+      .json({ user, success: true, message: "Admin registered successfully!" });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -117,14 +122,14 @@ export const adminSendResetOTP = async (req, res) => {
       });
     }
 
-    user.resetOTP = Math.floor( 100000 + Math.random() * 900000).toString();
+    user.resetOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
-    user.otpExpire = new Date( Date.now() + 5 * 60 * 1000);
+    user.otpExpire = new Date(Date.now() + 5 * 60 * 1000);
 
     await user.save();
 
     console.log("Saved OTP:", user.resetOTP);
-  
+
     // transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -222,7 +227,6 @@ export const adminSendResetOTP = async (req, res) => {
   }
 };
 
-
 // verify OTP
 export const adminVerifyOTP = async (req, res) => {
   try {
@@ -236,7 +240,6 @@ export const adminVerifyOTP = async (req, res) => {
         message: "User not found",
       });
     }
-
 
     if (String(user.resetOTP) !== String(otp)) {
       return res.status(400).json({
@@ -256,7 +259,6 @@ export const adminVerifyOTP = async (req, res) => {
       success: true,
       message: "OTP Verified",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -264,7 +266,6 @@ export const adminVerifyOTP = async (req, res) => {
     });
   }
 };
-
 
 // reset password
 export const adminVesetPassword = async (req, res) => {
@@ -304,6 +305,164 @@ export const adminVesetPassword = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+// USER FEEDBACK TO ADMIN
+export const userFeedback = async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    //  if any cridentials are missing
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const data = await UserFeedBack.create({
+      name,
+      email,
+      subject,
+      message,
+    });
+
+    // transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // Mail options
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Feedback Received - Camellia Leaf Tea Co.",
+      html: `
+  <div style="font-family: Arial, sans-serif; background-color:#f4f4f4; padding:20px;">
+    <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+      <div style="background:#0f766e; color:white; padding:20px; text-align:center;">
+        <h1>🍵 Camellia Leaf Tea Co.</h1>
+        <p>Your Response Has Been Delivered</p>
+      </div>
+
+      <div style="padding:30px;">
+        <h2>Hello ${name},</h2>
+
+        <p>
+          Thank you for contacting <strong>Camellia Leaf Tea Co.</strong>.
+          Your message has been successfully delivered to our administration team.
+        </p>
+
+        <div style="
+          background:#f8fafc;
+          border-left:4px solid #0f766e;
+          padding:20px;
+          margin:25px 0;
+          border-radius:6px;
+        ">
+          <h3 style="margin-top:0; color:#0f766e;">
+            Message Details
+          </h3>
+
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong></p>
+          <p style="background:#ffffff; padding:12px; border-radius:5px;">
+            ${message}
+          </p>
+        </div>
+
+        <p>
+          Our team will review your inquiry and get back to you as soon as possible.
+        </p>
+
+        <p>
+          We appreciate your interest in our tea collection and services.
+        </p>
+
+        <br>
+
+        <p>
+          Regards,<br>
+          <strong>Camellia Leaf Tea Co. Administration Team</strong>
+        </p>
+      </div>
+
+      <div style="
+        background:#f8fafc;
+        text-align:center;
+        padding:15px;
+        color:#64748b;
+        font-size:12px;
+      ">
+        © ${new Date().getFullYear()} Camellia Leaf Tea Co.
+        <br>
+        This is an automated confirmation email.
+      </div>
+
+    </div>
+  </div>
+`
+    };
+    // Send email
+    const mailResponse = await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      success: true,
+      message: "Feedback sent successfully",
+      data,
+    });
+  } catch (error) {}
+};
+
+// GET FEEDBACK DATA
+export const getAllFeedbacks = async (req, res) => {
+  try {
+    const feedbacks = await UserFeedBack.find();
+
+    return res.status(200).json({
+      success: true,
+      feedbacks,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const feedback = await UserFeedBack.findByIdAndDelete(id);
+
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: "Feedback not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Feedback deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
     });
   }
 };

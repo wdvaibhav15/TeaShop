@@ -52,6 +52,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
         {/* Navigation Menu */}
         <nav className="px-3 pb-3 space-y-1">
+          {/* // overview */}
           <button
             type="button"
             onClick={() => setActiveTab('overview')}
@@ -65,6 +66,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             </div>
           </button>
 
+          {/* //order station */}
           <button
             type="button"
             onClick={() => setActiveTab('orders')}
@@ -78,6 +80,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             </div>
           </button>
 
+          {/* //coffees & menu */}
           <button
             type="button"
             onClick={() => setActiveTab('coffees')}
@@ -92,19 +95,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             </div>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('inventory')}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-              activeTab === 'inventory' ? 'bg-[#234938] text-white' : 'hover:bg-[#1C382C]'
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <PackageCheck className="w-4 h-4" />
-              <span>Inventory & Beans</span>
-            </div>
-          </button>
-
+          {/* // sales & trends */}
           <button
             type="button"
             onClick={() => setActiveTab('analytics')}
@@ -118,6 +109,21 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             </div>
           </button>
 
+          {/* //inventory & beans */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('UserFeedback')}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+              activeTab === 'UserFeedback' ? 'bg-[#234938] text-white' : 'hover:bg-[#1C382C]'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <PackageCheck className="w-4 h-4" />
+              <span>UserFeedBack</span>
+            </div>
+          </button>
+
+            {/* // cafe setting */}
           <button
             type="button"
             onClick={() => setActiveTab('settings')}
