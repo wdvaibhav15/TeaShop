@@ -29,6 +29,9 @@ const LoginPage = () => {
           email,
           password,
         },
+        {
+    withCredentials: true,
+  }
       );
 
       if (response.data.success) {

@@ -14,6 +14,7 @@ import authRoutes from './routes/authRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
 import addCups from './routes/AddCups.js';
 import paymentRoutes from "./routes/payment.routes.js";
+import cookieParser from "cookie-parser";
 
 // Connect to Database
 connectDB();
@@ -21,6 +22,7 @@ connectDB();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -44,7 +46,11 @@ app.use('/api/coffee', addCups);
 
 
 
-app.use( "/api/payment", paymentRoutes);
+
+
+
+
+app.use("/api/payment", paymentRoutes);
 
 
 const PORT = process.env.PORT || 3000;

@@ -1,123 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import {
-  Star,
-  ShoppingBag,
-  CheckCircle2,
-  AlertCircle,
-  ChevronRight,
-} from "lucide-react";
-
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
+import useRazorpay from "../hooks/useRazorpay";
+import { AlertCircle, CheckCircle2, ChevronRight, ShoppingBag, Star } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const ProductDetailsPage = () => {
+  const { startPayment, loading: paymentLoading } = useRazorpay();
+
   const { id } = useParams();
+  const { user } = useSelector((state) => state.user);
+
+console.log("Logged User:", user);
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const navigate = useNavigate();
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  const handleOrderNow = async () => {
-    try {
-      setIsProcessingPayment(true);
+  console.log("Logged User:", user);
 
-      const totalAmount = Number(price) * quantity;
+  const handleOrderNow = () => {
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_CLIENT_API_URL}/api/payment/create-order`,
-        {
-          amount,
-          coffeeId,
-          quantity,
-          userId,
-        },
-        {
-          withCredentials: true,
-        },
-      );
-
-      if (!data.success) {
-        alert("Unable to initialize payment");
-        return;
-      }
-
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
-        amount: data.order.amount,
-
-        currency: data.order.currency,
-
-        order_id: data.order.id,
-
-        name: "Tea & Coffee Shop",
-
-        description: `${quantity} x ${title}`,
-
-        image: image,
-
-        handler: async function (response) {
-          try {
-            const verify = await axios.post(
-              `${import.meta.env.VITE_CLIENT_API_URL}/api/payment/verify-payment`,
-              {
-                razorpay_order_id: response.razorpay_order_id,
-
-                razorpay_payment_id: response.razorpay_payment_id,
-
-                razorpay_signature: response.razorpay_signature,
-              },
-            );
-
-            if (verify.data.success) {
-              alert("Payment Successful");
-
-              navigate(`/order-success/${response.razorpay_payment_id}`);
-            } else {
-              alert("Payment Verification Failed");
-            }
-          } catch (err) {
-            console.log(err);
-            alert("Verification Error");
-          }
-        },
-
-        prefill: {
-          name: "Customer",
-          email: "customer@example.com",
-        },
-
-        theme: {
-          color: "#065f46",
-        },
-
-        modal: {
-          ondismiss: () => {
-            setIsProcessingPayment(false);
-          },
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-
-      razorpay.open();
-
-      razorpay.on("payment.failed", function (response) {
-        alert(response.error.description);
-      });
-    } catch (error) {
-      console.log(error);
-
-      alert(error.response?.data?.message || "Failed to start payment");
-    } finally {
-      setIsProcessingPayment(false);
-    }
-  };
+  startPayment({
+  coffeeId: product._id,
+  quantity,
+  amount: Number(price) * quantity,
+  userId: user?.id || user?._id,
+  title,
+  image,
+});
+};
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -343,10 +260,10 @@ const ProductDetailsPage = () => {
 
             <button
               onClick={handleOrderNow}
-              disabled={!inStock || isProcessingPayment}
+              disabled={!inStock || paymentLoading}
               className="flex-1 w-full mt-8 py-3.5 px-6 rounded-2xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-semibold shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all"
             >
-              {isProcessingPayment ? "Processing..." : "Pay Now"}
+              {paymentLoading ? "Processing..." : "Pay Now"}
             </button>
           </div>
         </div>

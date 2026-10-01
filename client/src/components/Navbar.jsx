@@ -19,6 +19,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
+  const handleOrders = () => {
+    setUserDropdown(false);
+    navigate("/my-orders");
+  }
+
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -162,6 +167,15 @@ const Navbar = () => {
                         <User className="w-4 h-4" />
                         {user.email}
                       </p>
+
+                      <button
+                        type="button"
+                        onClick={handleOrders}
+                        className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs  hover:bg-red-50 dark:hover:bg-red-950/30 font-semibold"
+                      >
+                        <User className="w-4 h-4" />
+                        My Orders
+                      </button>
 
                       <button
                         type="button"

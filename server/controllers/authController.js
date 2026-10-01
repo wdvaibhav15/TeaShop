@@ -33,11 +33,11 @@ export const registerUser = async (req, res) => {
     const token = await genToken(user._id);
 
     res.cookie("token", token, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+});
 
     res.status(201).json({ user, success: true, message: "User registered successfully!" });
   } catch (error) {
@@ -69,12 +69,16 @@ export const loginUser = async (req, res) => {
     }
 
     const token = genToken(user._id);
+
+    console.log("Generated JWT:", token);
+console.log("JWT Type:", typeof token);
+    
     res.cookie("token", token, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+});
 
     res.status(200).json({
       success: true,

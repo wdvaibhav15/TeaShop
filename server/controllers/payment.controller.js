@@ -1,6 +1,7 @@
 import crypto from "crypto";
-import Order from "../models/order.model.js";
 import razorpay from "../config/razorpay.js";
+import Order from "../models/order.model.js";
+import PaymentHistory from "../models/paymentHistory.model.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -11,10 +12,11 @@ export const createOrder = async (req, res) => {
       userId,
     } = req.body;
 
-    if (!amount || !coffeeId) {
+    if (!amount || !coffeeId || !userId) {
       return res.status(400).json({
         success: false,
-        message: "Amount and Coffee ID are required",
+        message:
+          "Amount, Coffee ID and User ID are required",
       });
     }
 
@@ -27,7 +29,17 @@ export const createOrder = async (req, res) => {
     const razorpayOrder =
       await razorpay.orders.create(options);
 
-    const newOrder = await Order.create({
+    const order = await Order.create({
+      userId,
+      coffeeId,
+      quantity,
+      amount,
+      razorpayOrderId: razorpayOrder.id,
+      paymentStatus: "PENDING",
+    });
+
+    await PaymentHistory.create({
+      orderId: order._id,
       userId,
       coffeeId,
       quantity,
@@ -39,7 +51,7 @@ export const createOrder = async (req, res) => {
     return res.status(201).json({
       success: true,
       order: razorpayOrder,
-      dbOrderId: newOrder._id,
+      dbOrderId: order._id,
     });
   } catch (error) {
     console.log(error);
@@ -51,7 +63,6 @@ export const createOrder = async (req, res) => {
     });
   }
 };
-
 export const verifyPayment = async (
   req,
   res
@@ -81,6 +92,16 @@ export const verifyPayment = async (
       razorpay_signature
     ) {
       await Order.findOneAndUpdate(
+        {
+          razorpayOrderId:
+            razorpay_order_id,
+        },
+        {
+          paymentStatus: "FAILED",
+        }
+      );
+
+      await PaymentHistory.findOneAndUpdate(
         {
           razorpayOrderId:
             razorpay_order_id,
@@ -123,6 +144,24 @@ export const verifyPayment = async (
       });
     }
 
+    await PaymentHistory.findOneAndUpdate(
+      {
+        razorpayOrderId:
+          razorpay_order_id,
+      },
+      {
+        paymentStatus: "PAID",
+        razorpayPaymentId:
+          razorpay_payment_id,
+        razorpaySignature:
+          razorpay_signature,
+        paidAt: new Date(),
+      },
+      {
+        new: true,
+      }
+    );
+
     return res.status(200).json({
       success: true,
       message:
@@ -136,6 +175,54 @@ export const verifyPayment = async (
       success: false,
       message: "Verification failed",
       error: error.message,
+    });
+  }
+};
+
+export const getPaymentHistory = async (
+  req,
+  res
+) => {
+  try {
+    const payments =
+      await PaymentHistory.find()
+        .populate("userId")
+        .populate("coffeeId")
+        .populate("orderId")
+        .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      payments,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const orders = await Order.find({
+      userId,
+    })
+      .populate("coffeeId")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
