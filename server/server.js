@@ -32,7 +32,7 @@ app.use(
 );
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Hello Camellia!');
 });
 
 // User Routes
@@ -44,12 +44,7 @@ app.use('/api/admin', adminRoutes);
 //Add coffee Routes
 app.use('/api/coffee', addCups);
 
-
-
-
-
-
-
+// razorpay route
 app.use("/api/payment", paymentRoutes);
 
 

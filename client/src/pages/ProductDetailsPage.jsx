@@ -4,10 +4,11 @@ import axios from "axios";
 import useRazorpay from "../hooks/useRazorpay";
 import { AlertCircle, CheckCircle2, ChevronRight, ShoppingBag, Star } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetailsPage = () => {
   const { startPayment, loading: paymentLoading } = useRazorpay();
-
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
@@ -22,7 +23,7 @@ console.log("Logged User:", user);
 
   const handleOrderNow = () => {
   if (!user) {
-    alert("Please login first");
+    navigate("/login");
     return;
   }
 

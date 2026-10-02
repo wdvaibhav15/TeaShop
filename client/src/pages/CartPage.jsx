@@ -2,13 +2,30 @@ import React from "react";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import useRazorpay from "../hooks/useRazorpay";
 import { removeFromCart, increaseQty, decreaseQty } from "../redux/cartSlice";
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const { user } = useSelector((state) => state.user);
+  const { startPayment, loading: paymentLoading } = useRazorpay();
+  const handleCheckout = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    startPayment({
+      coffeeId: cartItems[0]?._id,
+      quantity: cartItems.reduce((total, item) => total + item.quantity, 0),
+      amount: totalPrice,
+      userId: user?._id || user?.id,
+      title: `Cart Order (${cartItems.length} Items)`,
+      image: cartItems[0]?.image || cartItems[0]?.imageUrl,
+    });
+  };
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -111,8 +128,12 @@ const CartPage = () => {
 
           {/* Checkout Button */}
           <div className="mt-6 text-right">
-            <button className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700">
-              Proceed To Checkout
+            <button
+              onClick={handleCheckout}
+              disabled={paymentLoading}
+              className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {paymentLoading ? "Processing..." : "Proceed To Checkout"}
             </button>
           </div>
         </>
