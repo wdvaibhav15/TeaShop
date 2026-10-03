@@ -304,7 +304,7 @@ const UserDashboardPage = () => {
                           {order.status}
                         </span>
                         <span className="font-bold text-stone-900 dark:text-stone-100">
-                          ${order.total?.toFixed(2)}
+                        ₹{order.total?.toFixed(2)}
                         </span>
                         <button
                           onClick={() => setSelectedInvoiceOrder(order)}
@@ -390,7 +390,7 @@ const UserDashboardPage = () => {
                               </div>
                             </div>
                             <span className="font-semibold">
-                              ${(item.price * item.quantity).toFixed(2)}
+                              ₹{(item.price * item.quantity).toFixed(2)}
                             </span>
                           </div>
                         ))}
@@ -408,7 +408,7 @@ const UserDashboardPage = () => {
                           </span>
                         </div>
                         <div className="font-bold text-stone-900 dark:text-stone-100">
-                          Total: ${order.total?.toFixed(2)}
+                          Total: ₹{order.total?.toFixed(2)}
                         </div>
                       </div>
                     </div>
@@ -462,7 +462,7 @@ const UserDashboardPage = () => {
                           >
                             {p.name}
                           </Link>
-                          <span className="text-stone-400">${p.price.toFixed(2)}</span>
+                          <span className="text-stone-400">₹{p.price.toFixed(2)}</span>
                         </div>
                       </div>
                       <Link

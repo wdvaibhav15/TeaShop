@@ -206,7 +206,7 @@ const ProductDetailsPage = () => {
           {/* Price & Stock Status */}
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900 dark:bg-stone-850 border border-stone-200/80 dark:border-stone-800">
             <span className="text-3xl font-bold text-stone-900 dark:text-stone-100">
-              ${price}
+              ₹{price}
             </span>
 
             <div>

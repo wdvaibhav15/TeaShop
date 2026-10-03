@@ -68,7 +68,7 @@ const MostLiked = () => {
                 </p>
 
                 <p className="text-emerald-500 font-bold text-lg mt-3">
-                  ${item.price}
+                  ₹{item.price}
                 </p>
               </div>
             </div>

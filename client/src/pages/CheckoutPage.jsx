@@ -405,7 +405,7 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                   <div className="font-semibold text-stone-900 dark:text-stone-100">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₹{(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -415,30 +415,30 @@ const CheckoutPage = () => {
             <div className="space-y-2.5 text-xs border-t border-stone-100 dark:border-stone-800 pt-4">
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Subtotal</span>
-                <span>${cartSubtotal.toFixed(2)}</span>
+                <span>₹{cartSubtotal.toFixed(2)}</span>
               </div>
 
               {couponDiscount > 0 && (
                 <div className="flex justify-between text-emerald-700 dark:text-emerald-400 font-medium">
                   <span>Coupon Discount ({appliedCoupon?.code})</span>
-                  <span>-${couponDiscount.toFixed(2)}</span>
+                  <span>₹-{couponDiscount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Shipping</span>
-                <span>{shippingFee === 0 ? "FREE" : `$${shippingFee.toFixed(2)}`}</span>
+                <span>{shippingFee === 0 ? "FREE" : `₹${shippingFee.toFixed(2)}`}</span>
               </div>
 
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Estimated Tax (8%)</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between text-lg font-bold text-stone-900 dark:text-stone-100 border-t border-stone-200 dark:border-stone-800 pt-3">
                 <span>Total Due</span>
                 <span className="text-emerald-800 dark:text-emerald-400">
-                  ${cartTotal.toFixed(2)}
+                  ₹{cartTotal.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -458,7 +458,7 @@ const CheckoutPage = () => {
                 <>
                   <Lock className="w-4 h-4" />
                   <span>
-                    Pay ${cartTotal.toFixed(2)} & Complete Order
+                    Pay ₹{cartTotal.toFixed(2)} & Complete Order
                   </span>
                 </>
               )}

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
 
@@ -36,6 +36,7 @@ const LoginPage = () => {
 
       if (response.data.success) {
         dispatch(setUser(response.data.user));
+        toast.success("Login successful");
         console.log("Login successful:", response.data);
         navigate("/");
       }

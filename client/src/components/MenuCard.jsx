@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import VanillaTilt from "vanilla-tilt";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import { toast } from "react-hot-toast";
 import { addToCart } from "../redux/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistSlice";
 
@@ -53,13 +53,16 @@ const MenuCard = () => {
 
     if (exists) {
       dispatch(removeFromWishlist(item._id));
+      toast.success("Removed from wishlist");
     } else {
+      toast.success("Added in wishlist");
       dispatch(addToWishlist(item));
     }
   };
 
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
+    toast.success("Item Added in cart");
   };
 
   if (loading) {
@@ -127,7 +130,7 @@ const MenuCard = () => {
                     <p className="text-stone-400 text-xs mb-1">Price</p>
 
                     <span className="text-3xl font-black text-white">
-                      ${item.price}
+                      ₹{item.price}
                     </span>
                   </div>
 

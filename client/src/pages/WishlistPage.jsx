@@ -124,7 +124,7 @@ console.log("Wishlist Items:", wishlistItems); // Debugging line
 
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-2xl font-bold text-emerald-500">
-                      ${product.price}
+                      ₹{product.price}
                     </span>
 
                     <span className="text-stone-500 text-sm">

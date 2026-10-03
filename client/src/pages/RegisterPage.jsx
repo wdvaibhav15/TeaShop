@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail, User, ArrowRight } from "lucide-react";
 import axios from "axios";
-
+import toast from "react-hot-toast";
 
 
 
@@ -27,7 +27,7 @@ const RegisterPage =() => {
       
       console.log(response.data);
       if(response.data.success) {
-        
+        toast.success("Registration successful! Please log in.");
         navigate("/login");
       }
     } catch (error) {

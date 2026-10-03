@@ -10,7 +10,17 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <App />
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 1000,
+          style: {
+            background: "#111827",
+            color: "#fff",
+            border: "1px solid #10b981",
+          },
+        }}
+      />
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

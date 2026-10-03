@@ -121,9 +121,9 @@ const InvoiceModal = ({ order, onClose }) => {
                       {item.name}
                     </td>
                     <td className="py-3 text-center">{item.quantity}</td>
-                    <td className="py-3 text-right">${item.price.toFixed(2)}</td>
+                    <td className="py-3 text-right">₹{item.price.toFixed(2)}</td>
                     <td className="py-3 text-right font-semibold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₹{(item.price * item.quantity).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -136,28 +136,28 @@ const InvoiceModal = ({ order, onClose }) => {
             <div className="w-64 space-y-2 text-xs">
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Subtotal:</span>
-                <span>${order.subtotal?.toFixed(2)}</span>
+                <span>₹{order.subtotal?.toFixed(2)}</span>
               </div>
               {order.discount > 0 && (
                 <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
                   <span>Coupon Discount:</span>
-                  <span>-${order.discount?.toFixed(2)}</span>
+                  <span>₹-{order.discount?.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Shipping:</span>
                 <span>
-                  {order.shippingFee === 0 ? "FREE" : `$${order.shippingFee?.toFixed(2)}`}
+                  {order.shippingFee === 0 ? "FREE" : `₹${order.shippingFee?.toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between text-stone-600 dark:text-stone-400">
                 <span>Estimated Tax (8%):</span>
-                <span>${order.tax?.toFixed(2)}</span>
+                <span>₹{order.tax?.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm font-bold text-stone-900 dark:text-stone-100 pt-2 border-t border-stone-200 dark:border-stone-700">
                 <span>Total Paid:</span>
                 <span className="text-emerald-800 dark:text-emerald-400">
-                  ${order.total?.toFixed(2)}
+                  ₹{order.total?.toFixed(2)}
                 </span>
               </div>
             </div>

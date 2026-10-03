@@ -30,10 +30,10 @@ const Announcement = () => {
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
         
           <div className="flex items-center gap-2 truncate">
-          <span>🌿 Free shipping on orders over $50</span>
+          <span>🌿 Free shipping on orders over ₹50</span>
         </div>
         <div className="flex items-center gap-2 truncate">
-          <span>🌿 Free shipping on orders over $50</span>
+          <span>🌿 Free shipping on orders over ₹50</span>
         </div>
 
         <div className="flex items-center gap-4 text-[11px] font-medium ml-auto">

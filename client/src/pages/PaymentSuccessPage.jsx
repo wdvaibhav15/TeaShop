@@ -84,7 +84,7 @@ const PaymentSuccessPage = () => {
                     </div>
                   </div>
                   <span className="font-bold text-stone-900 dark:text-stone-100">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₹{(item.price * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -96,7 +96,7 @@ const PaymentSuccessPage = () => {
               Total Charged ({order.paymentMethod}):
             </span>
             <span className="text-base font-bold text-emerald-800 dark:text-emerald-400">
-              ${order.total?.toFixed(2)}
+              ₹{order.total?.toFixed(2)}
             </span>
           </div>
 

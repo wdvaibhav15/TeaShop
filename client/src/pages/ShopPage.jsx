@@ -201,7 +201,7 @@ const ShopPage = () => {
                   Price Limit
                 </label>
                 <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-400">
-                  Up to ${priceRange[1]}
+                  Up to ₹{priceRange[1]}
                 </span>
               </div>
               <input
@@ -214,8 +214,8 @@ const ShopPage = () => {
                 className="w-full accent-emerald-800 cursor-pointer"
               />
               <div className="flex justify-between text-[11px] text-stone-400 mt-1">
-                <span>$10</span>
-                <span>$70+</span>
+                <span>₹10</span>
+                <span>₹70+</span>
               </div>
             </div>
 

@@ -65,7 +65,7 @@ export default function HeroSection() {
               <div className="flex items-start gap-2.5">
                 <Truck className="w-5 h-5 text-emerald-700 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200">Free Ship $50+</h4>
+                  <h4 className="text-xs font-bold text-stone-900 dark:text-stone-200">Free Ship ₹50+</h4>
                   <p className="text-[11px] text-stone-500 dark:text-stone-400">Carbon neutral dispatch</p>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { FaHeart } from "react-icons/fa";
 import { logoutUser } from "../redux/userSlice";
+import  toast  from "react-hot-toast";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Navbar = () => {
   const handleLogout = () => {
     setUserDropdown(false);
     dispatch(logoutUser());
+    toast.success("Logged out successfully");
     console.log("User logged out successfully.");
     // Clear user tokens/session data from localStorage
     localStorage.removeItem('token');
