@@ -154,7 +154,7 @@ const MenuCard = () => {
                     </span>
 
                     <span className="text-2xl font-black text-gray-900">
-                      ₹{item.price}
+                      ${item.price}
                     </span>
                   </div>
                 </div>

@@ -124,7 +124,7 @@ const MyOrders = () => {
                           </p>
 
                           <p>
-                            ₹
+                            $
                             {item.price ||
                               item.amount ||
                               0}
@@ -143,7 +143,7 @@ const MyOrders = () => {
                       </p>
 
                       <p>
-                        ₹
+                        $
                         {order.total ||
                           order.amount ||
                           0}
@@ -155,7 +155,7 @@ const MyOrders = () => {
                 {/* Footer */}
                 <div className="border-t border-gray-700 mt-5 pt-5 flex justify-between items-center">
                   <h3 className="text-2xl font-bold">
-                    ₹
+                    $
                     {order.total ||
                       order.amount ||
                       0}

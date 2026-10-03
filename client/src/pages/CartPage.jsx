@@ -82,7 +82,7 @@ const CartPage = () => {
                       {item.category || "Coffee"}
                     </p>
 
-                    <p className="font-bold">₹{item.price}</p>
+                    <p className="font-bold">${item.price}</p>
                   </div>
                 </div>
 
@@ -105,7 +105,7 @@ const CartPage = () => {
                   </button>
 
                   <p className="font-bold w-24 text-right">
-                    ₹{(item.price * item.quantity).toFixed(2)}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </p>
 
                   <button
@@ -123,7 +123,7 @@ const CartPage = () => {
           <div className="mt-8 border-t pt-4 flex justify-between">
             <h2 className="text-xl font-bold">Subtotal</h2>
 
-            <h2 className="text-xl font-bold">₹{totalPrice.toFixed(2)}</h2>
+            <h2 className="text-xl font-bold">${totalPrice.toFixed(2)}</h2>
           </div>
 
           {/* Checkout Button */}

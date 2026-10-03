@@ -5,24 +5,31 @@ import useRazorpay from "../hooks/useRazorpay";
 import { AlertCircle, CheckCircle2, ChevronRight, ShoppingBag, Star } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/cartSlice";
+import { toast } from "react-hot-toast";
 
 const ProductDetailsPage = () => {
   const { startPayment, loading: paymentLoading } = useRazorpay();
+  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
-console.log("Logged User:", user);
+
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  console.log("Logged User:", user);
+  
 
   const handleOrderNow = () => {
   if (!user) {
+    toast.error("Please login to make payment.");
     navigate("/login");
     return;
   }
@@ -134,17 +141,14 @@ console.log("Logged User:", user);
       : "N/A";
 
   const handleAddToBag = () => {
-    const itemToAdd = {
-      id: product._id || product.id,
-      title,
-      price: Number(price),
-      image,
+  dispatch(
+    addToCart({
+      ...product,
       quantity,
-    };
-
-    console.log("Added to bag:", itemToAdd);
-    alert(`Added ${quantity} x ${title} to your bag!`);
-  };
+    })
+  );
+  toast.success(`${title} added to cart!`);
+};
 
   return (
     <div className="py-8 md:py-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">

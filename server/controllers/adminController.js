@@ -466,3 +466,20 @@ export const deleteFeedback = async (req, res) => {
     });
   }
 };
+
+// GET ALL ORDERS
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find();
+
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

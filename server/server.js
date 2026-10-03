@@ -15,6 +15,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import addCups from './routes/AddCups.js';
 import paymentRoutes from "./routes/payment.routes.js";
 import cookieParser from "cookie-parser";
+import allOrdersRoutes from './routes/allOrdersRoutes.js';
 
 // Connect to Database
 connectDB();
@@ -46,6 +47,9 @@ app.use('/api/coffee', addCups);
 
 // razorpay route
 app.use("/api/payment", paymentRoutes);
+
+//all orders route
+app.use('/api/orders', allOrdersRoutes);
 
 
 const PORT = process.env.PORT || 3000;

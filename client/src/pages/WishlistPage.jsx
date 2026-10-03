@@ -4,18 +4,22 @@ import { removeFromWishlist } from "../redux/wishlistSlice";
 import { addToCart } from "../redux/cartSlice";
 import { Link } from "react-router-dom";
 import { Heart,ShoppingBag, Trash2, ArrowRight, Check,} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { setItems } from "../redux/productSlice";
 
 const WishlistPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
 const wishlistItems = useSelector((state) => state.wishlist.wishlistItems );
+console.log("Wishlist Items:", wishlistItems); // Debugging line
 
   const [toastMessage, setToastMessage] = useState("");
 
 
   const handleRemove = (id) => {
-  dispatch(removeFromWishlist(id));
 
+  dispatch(removeFromWishlist(id));
   setToastMessage("Item removed from wishlist");
 
   setTimeout(() => {
@@ -25,7 +29,7 @@ const wishlistItems = useSelector((state) => state.wishlist.wishlistItems );
 
   const handleOrderNow = (product) => {
   dispatch(addToCart(product));
-
+  navigate(`/order/${product._id}`)
   setToastMessage(
     `${product.coffeeTitle || product.name} added to cart`
   );

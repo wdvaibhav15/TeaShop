@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import AddCoffee from "../components/AddCoffee";
 import MenuCard from "../components/MenuCard";
 import FeedbackTable from "../components/FeedBackTable";
+import AllOrders from "../components/AllOrders";
 
 const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,6 +29,7 @@ const AdminDashboardPage = () => {
         {activeTab === "orders" && (
           <div>
             <h2 className="text-xl font-bold">Order Station</h2>
+            <AllOrders onClose={() => setActiveTab("overview")} />
           </div>
         )}
 

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { FaHeart } from "react-icons/fa";
+import { logoutUser } from "../redux/userSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -19,10 +20,22 @@ const Navbar = () => {
   const navigate = useNavigate();
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
+
   const handleOrders = () => {
     setUserDropdown(false);
     navigate("/my-orders");
   }
+
+  const handleLogout = () => {
+    setUserDropdown(false);
+    dispatch(logoutUser());
+    console.log("User logged out successfully.");
+    // Clear user tokens/session data from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Redirect user to the login screen
+    navigate('/');
+  };
 
   useEffect(() => {
     if (theme === "dark") {
@@ -179,9 +192,7 @@ const Navbar = () => {
 
                       <button
                         type="button"
-                        onClick={() => {
-                          setUserDropdown(false);
-                        }}
+                        onClick={handleLogout}
                         className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 font-semibold"
                       >
                         <User className="w-4 h-4" />
