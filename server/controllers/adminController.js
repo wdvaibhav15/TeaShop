@@ -485,7 +485,7 @@ export const getAllOrders = async (req, res) => {
       time: order.createdAt.toLocaleTimeString(),
     }));
 
-    console.log(formattedOrders);
+    
     return res.status(200).json({
       success: true,
       orders: formattedOrders,

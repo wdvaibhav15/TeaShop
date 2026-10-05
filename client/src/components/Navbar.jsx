@@ -11,21 +11,32 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { FaHeart } from "react-icons/fa";
 import { logoutUser } from "../redux/userSlice";
-import  toast  from "react-hot-toast";
+import toast from "react-hot-toast";
+import { setSearchTerm } from "../redux/searchSlice";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
+  const location = useLocation();
+  const menuPage = location.pathname === "/shop";
   const dispatch = useDispatch();
+  const [searchInput, setSearchInput] = useState("");
   const [userDropdown, setUserDropdown] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const user = useSelector((state) => state.user?.user);
   const navigate = useNavigate();
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
-
   const handleOrders = () => {
     setUserDropdown(false);
     navigate("/my-orders");
-  }
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+
+    setSearchInput(value); // local input state
+    dispatch(setSearchTerm(value)); // redux state
+  };
 
   const handleLogout = () => {
     setUserDropdown(false);
@@ -33,10 +44,10 @@ const Navbar = () => {
     toast.success("Logged out successfully");
     console.log("User logged out successfully.");
     // Clear user tokens/session data from localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     // Redirect user to the login screen
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
@@ -99,16 +110,20 @@ const Navbar = () => {
           </nav>
 
           {/* Search Bar */}
-          <div className="relative hidden lg:block max-w-xs w-full">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search teas, origins, aromas..."
-                className="w-full bg-stone-100/90 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-700 transition-all"
-              />
-              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+          {menuPage && (
+            <div className="relative hidden lg:block max-w-xs w-full">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search teas, origins, aromas..."
+                  value={searchInput}
+                  onChange={handleSearch}
+                  className="w-full bg-stone-100/90 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-700 transition-all"
+                />
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Right Action Icons: Wishlist, Cart, User */}
           <div className="flex items-center gap-2.5">
