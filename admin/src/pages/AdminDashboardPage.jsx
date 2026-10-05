@@ -28,7 +28,7 @@ const AdminDashboardPage = () => {
 
         {activeTab === "orders" && (
           <div>
-            <h2 className="text-xl font-bold">Order Station</h2>
+            
             <AllOrders onClose={() => setActiveTab("overview")} />
           </div>
         )}

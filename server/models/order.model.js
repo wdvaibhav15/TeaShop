@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema(
 
     coffeeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Coffee",
+      ref: "CoffeeCup",
       required: true,
     },
 

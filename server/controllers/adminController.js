@@ -3,6 +3,8 @@ import Admin from "../models/Admin.js";
 import genToken from "../utils/token.js";
 import nodemailer from "nodemailer";
 import UserFeedBack from "../models/UserFeedBack.js";
+import Order from "../models/order.model.js";
+import Coffee from "../models/CoffeeCup.js";
 
 
 
@@ -470,13 +472,27 @@ export const deleteFeedback = async (req, res) => {
 // GET ALL ORDERS
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find()
+      .populate("coffeeId", "coffeeTitle")
+      .sort({ createdAt: -1 });
 
+    const formattedOrders = orders.map((order) => ({
+      coffeeName: order.coffeeId?.coffeeTitle,
+      quantity: order.quantity,
+      amount: order.amount,
+      paymentStatus: order.paymentStatus,
+      date: order.createdAt.toLocaleDateString(),
+      time: order.createdAt.toLocaleTimeString(),
+    }));
+
+    console.log(formattedOrders);
     return res.status(200).json({
       success: true,
-      orders,
+      orders: formattedOrders,
     });
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
