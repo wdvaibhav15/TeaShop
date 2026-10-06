@@ -8,6 +8,7 @@ import ResetPassword from './pages/ResetPassword';
 import VerifyOTP from './components/VerifyOTP';
 import NewPass from './components/NewPass';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import CafeSetting from './pages/CafeSetting';
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/new-password" element={<NewPass />} />
           <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+          <Route path="/cafe-settings" element={<CafeSetting />} />
         </Routes>
       </main>
     </div>

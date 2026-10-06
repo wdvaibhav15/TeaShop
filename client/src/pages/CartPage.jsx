@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useRazorpay from "../hooks/useRazorpay";
 import { removeFromCart, increaseQty, decreaseQty } from "../redux/cartSlice";
+import toast from "react-hot-toast";
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const CartPage = () => {
   const { startPayment, loading: paymentLoading } = useRazorpay();
   const handleCheckout = () => {
     if (!user) {
+      toast.error("Please log in to proceed to checkout");
       navigate("/login");
       return;
     }

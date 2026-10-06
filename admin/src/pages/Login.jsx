@@ -1,30 +1,43 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Lock, Mail, ArrowRight, ShieldCheck, Sparkles, User } from "lucide-react";
+import {
+  Lock,
+  Mail,
+  ArrowRight,
+  ShieldCheck,
+  Sparkles,
+  User,
+} from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
-
-
-
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      
-      const response = await axios.post(`${import.meta.env.VITE_CLIENT_API_URL}/api/admin/login`, {
-        email,
-        password
-      });
-      
+      const response = await axios.post(
+        `${import.meta.env.VITE_CLIENT_API_URL}/api/admin/login`,
+        {
+          email,
+          password,
+        },
+      );
+
       if (response.data.success) {
-        console.log("Login successful:", response.data);
+        localStorage.setItem("token", response.data.token);
+
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        dispatch(setCurrentUser(response.data.user));
+
         navigate("/admin-dashboard");
       }
     } catch (error) {
@@ -32,9 +45,6 @@ const Login = () => {
       alert(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
-
-  
-  
 
   return (
     <div className="py-14 max-w-md mx-auto px-4 sm:px-6">
@@ -51,11 +61,10 @@ const Login = () => {
           </p>
         </div>
 
-        
         <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-600 dark:text-stone-300 uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Admin</span>
-          </div>
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <span>Admin</span>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -89,7 +98,7 @@ const Login = () => {
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-3.5" />
-              
+
               <input
                 type="password"
                 value={password}
@@ -122,6 +131,6 @@ const Login = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

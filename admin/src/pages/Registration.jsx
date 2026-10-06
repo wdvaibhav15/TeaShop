@@ -2,33 +2,35 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Lock, Mail, User, ArrowRight } from "lucide-react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setCurrentUser } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
-
-
-
-const Registration =() => {
+const Registration = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
- 
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_CLIENT_API_URL}/api/admin/register`, {
-        
-        email,
-        password,
-        confirmPassword,
-      });
-      console.log("Registration successful",response.data);
+      const response = await axios.post(
+        `${import.meta.env.VITE_CLIENT_API_URL}/api/admin/register`,
+        {
+          email,
+          password,
+          confirmPassword,
+        },
+      );
 
-      if(response.data.success) {
-        
+      if (response.data.success) {
         navigate("/login");
       }
+      
+
+      dispatch(setCurrentUser(response.data.user));
     } catch (error) {
       // This will print the precise error message sent by your backend database/server
       console.error("Server Error Response:", error.response?.data);
@@ -46,13 +48,12 @@ const Registration =() => {
             Create Your Tea Account
           </h1>
           <p className="text-xs text-stone-500">
-            Join our society to track orders, save tasting wishlists, and receive 15% off.
+            Join our society to track orders, save tasting wishlists, and
+            receive 15% off.
           </p>
         </div>
 
         <form className="space-y-4">
-          
-
           <div>
             <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
               Email Address *
@@ -123,7 +124,6 @@ const Registration =() => {
       </div>
     </div>
   );
-}
+};
 
 export default Registration;
-

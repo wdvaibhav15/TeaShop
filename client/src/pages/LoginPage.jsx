@@ -35,11 +35,29 @@ const LoginPage = () => {
       );
 
       if (response.data.success) {
-        dispatch(setUser(response.data.user));
-        toast.success("Login successful");
-        console.log("Login successful:", response.data);
-        navigate("/");
-      }
+  localStorage.setItem(
+    "user",
+    JSON.stringify(response.data.user)
+  );
+
+  if (response.data.token) {
+    localStorage.setItem(
+      "token",
+      response.data.token
+    );
+  }
+
+  dispatch(setUser(response.data.user));
+
+  toast.success("Login successful");
+
+  console.log(
+    "Login successful:",
+    response.data
+  );
+
+  navigate("/");
+}
     } catch (error) {
       console.error("Server Error Response:", error.response?.data);
       alert(error.response?.data?.message || "Login failed. Please try again.");

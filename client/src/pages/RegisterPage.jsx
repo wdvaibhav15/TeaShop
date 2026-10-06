@@ -36,13 +36,13 @@ const RegisterPage =() => {
   };
 
   return (
-    <div className="py-14 max-w-md mx-auto px-4 sm:px-6">
+    <div className="py-2 max-w-md mx-auto px-4 sm:px-6">
       <div className="bg-white dark:bg-stone-900 rounded-3xl p-8 border border-stone-200/80 dark:border-stone-800 shadow-xl space-y-6">
-        <div className="text-center space-y-1">
+        <div className="text-center ">
           <div className="w-12 h-12 rounded-2xl bg-emerald-800 text-amber-100 flex items-center justify-center font-serif text-2xl font-bold mx-auto shadow-md">
             🍵
           </div>
-          <h1 className="font-serif-tea text-2xl font-bold text-stone-900 dark:text-stone-100 pt-2">
+          <h1 className="font-serif-tea text-xl font-bold text-stone-900 dark:text-stone-100 pt-2">
             Create Your Tea Account
           </h1>
           <p className="text-xs text-stone-500">

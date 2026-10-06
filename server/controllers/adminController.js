@@ -5,6 +5,7 @@ import nodemailer from "nodemailer";
 import UserFeedBack from "../models/UserFeedBack.js";
 import Order from "../models/order.model.js";
 import Coffee from "../models/CoffeeCup.js";
+import Cafe from "../models/cafe.model.js";
 
 
 
@@ -492,6 +493,67 @@ export const getAllOrders = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//  SET CAFE SETTINGS
+export const cafeSettings = async (req, res) => {
+  try {
+    const {
+      cafeName,
+      cafeAddress,
+      cafeContact,
+      cafeEmail,
+      cafeTiming,
+    } = req.body;
+
+    const cafe = await Cafe.findOneAndUpdate(
+      {},
+      {
+        cafeName,
+        cafeAddress,
+        cafeContact,
+        cafeEmail,
+        cafeTiming,
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Cafe settings saved successfully",
+      cafe,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// GET CAFE SETTINGS
+export const getCafeSettings = async (req, res) => {
+  try {
+    const cafe = await Cafe.findOne();
+
+    return res.status(200).json({
+      success: true,
+      cafe,
+    });
+  } catch (error) {
+    console.log(error);
 
     return res.status(500).json({
       success: false,

@@ -1,12 +1,17 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2,} from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setFeedBackUser } from "../redux/userSlice";
+import { setFeedBackUser } from "../redux/userSlice.js";
+import React, { useState, useEffect } from "react";
+
+import { useSelector } from "react-redux";
+
+import axios from "axios";
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
+import useCafeSettings from "../hooks/useCafeSettings";
 
 const ContactPage = () => {
   const dispatch = useDispatch();
-  
+  const cafeData = useCafeSettings();
+
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +33,7 @@ const ContactPage = () => {
           email,
           subject,
           message,
-        }
+        },
       );
 
       if (response.data.success) {
@@ -42,7 +47,7 @@ const ContactPage = () => {
 
       alert(
         error.response?.data?.message ||
-          "Failed to send message. Please try again."
+          "Failed to send message. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -79,17 +84,14 @@ const ContactPage = () => {
         <div className="lg:col-span-5 space-y-8">
           <div className="bg-stone-50 dark:bg-stone-900/60 p-8 rounded-3xl border border-stone-200/80 dark:border-stone-800 space-y-6">
             <h3 className="font-serif-tea text-2xl font-bold text-stone-900 dark:text-stone-100">
-              Teahouse Headquarters
-            </h3>
+  {cafeData?.cafeName || "Teahouse Headquarters"}
+</h3>
 
             <div className="space-y-4 text-sm text-stone-600 dark:text-stone-300">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-emerald-700 dark:text-emerald-400 mt-0.5" />
                 <div>
-                  <span className="font-bold text-stone-900 dark:text-stone-100 block">
-                    Address:
-                  </span>
-                  <span>Rajkiye Nagar, Karnataka 238456</span>
+                  <span>{cafeData?.cafeAddress}</span>
                 </div>
               </div>
 
@@ -100,11 +102,11 @@ const ContactPage = () => {
                     Direct Email:
                   </span>
                   <a
-                    href="mailto:camellia@shop.com"
-                    className="hover:text-emerald-700 underline"
-                  >
-                    camellia@shop.com
-                  </a>
+  href={`mailto:${cafeData?.cafeEmail}`}
+  className="hover:text-emerald-700 underline"
+>
+  {cafeData?.cafeEmail}
+</a>
                 </div>
               </div>
 
@@ -114,7 +116,7 @@ const ContactPage = () => {
                   <span className="font-bold text-stone-900 dark:text-stone-100 block">
                     Phone Assistance:
                   </span>
-                  <span>+91 9747254287</span>
+                  <span>{cafeData?.cafeContact}</span>
                 </div>
               </div>
 
@@ -126,10 +128,8 @@ const ContactPage = () => {
                   </span>
 
                   <div className="text-xs space-y-1 mt-1 text-stone-500 dark:text-stone-400">
-                    <div>Tuesday – Friday: 8:00 AM – 6:00 PM</div>
-                    <div>Saturday & Sunday: 9:00 AM – 7:00 PM</div>
-                    <div>Monday: Closed</div>
-                  </div>
+  {cafeData?.cafeTiming}
+</div>
                 </div>
               </div>
             </div>

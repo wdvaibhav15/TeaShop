@@ -1,5 +1,5 @@
 import express from 'express';
-import { adminLogin, adminLogout, adminRegister, adminSendResetOTP, adminVerifyOTP, adminVesetPassword, deleteFeedback, getAllFeedbacks, userFeedback } from '../controllers/adminController.js';
+import { adminLogin, adminLogout, adminRegister, adminSendResetOTP, adminVerifyOTP, adminVesetPassword, cafeSettings, deleteFeedback, getAllFeedbacks, getCafeSettings, userFeedback } from '../controllers/adminController.js';
 
 
 const router = express.Router();
@@ -14,6 +14,11 @@ router.post("/reset-password",adminVesetPassword);
 router.post("/userfeedback", userFeedback);
 router.get("/userfeedback", getAllFeedbacks);
 router.delete("/userfeedback/:id", deleteFeedback);
+
+
+
+router.post("/cafe-settings", cafeSettings);
+router.get("/cafe-settings", getCafeSettings);
 
 
 

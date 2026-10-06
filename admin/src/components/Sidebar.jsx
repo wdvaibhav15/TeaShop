@@ -9,8 +9,11 @@ import {
   Plus
 } from 'lucide-react';
 import MenuCard from './MenuCard';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
+
+  const navigate = useNavigate();
   return (
     <aside className="fixed left-0 top-[88px] h-screen w-64 bg-[#172D23] text-[#F3EFE6] flex flex-col justify-between shrink-0 border-r border-[#264436] shadow-xl z-50 select-none overflow-hidden">
       <div className="flex-1 flex flex-col overflow-y-auto">
@@ -131,7 +134,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               activeTab === 'settings' ? 'bg-[#234938] text-white' : 'hover:bg-[#1C382C]'
             }`}
           >
-            <div className="flex items-center gap-3">
+            <div 
+            onClick={() => navigate('/cafe-settings')}
+            className="flex items-center gap-3">
               <Settings className="w-4 h-4" />
               <span>Cafe Settings</span>
             </div>
