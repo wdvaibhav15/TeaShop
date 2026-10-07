@@ -103,7 +103,7 @@ const SpecialOffersSection =() => {
 
             <div className="text-right pt-2">
               <Link
-                to="/shop"
+                to="/menu"
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 underline"
               >
                 Apply code in Cart &rarr;

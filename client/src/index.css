@@ -18,3 +18,12 @@
     font-family: 'Cinzel', Georgia, serif;
   }
 }
+
+@keyframes bubble3D {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    transform: scale(1.12) translateZ(20px);
+  }
+}

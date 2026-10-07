@@ -30,7 +30,7 @@ const NotFoundPage = () => {
           <span>Return Home</span>
         </Link>
         <Link
-          to="/shop"
+          to="/menu"
           className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-semibold hover:bg-stone-50 transition-colors"
         >
           <ShoppingBag className="w-3.5 h-3.5" />

@@ -17,7 +17,7 @@ import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const location = useLocation();
-  const menuPage = location.pathname === "/shop";
+  const menuPage = location.pathname === "/menu";
   const dispatch = useDispatch();
   const [searchInput, setSearchInput] = useState("");
   const [userDropdown, setUserDropdown] = useState(false);
@@ -89,7 +89,7 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/shop"
+              to="/menu"
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
             >
               Menu Card

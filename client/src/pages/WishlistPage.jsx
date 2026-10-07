@@ -79,7 +79,7 @@ console.log("Wishlist Items:", wishlistItems); // Debugging line
             </p>
 
             <Link
-              to="/shop"
+              to="/menu"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-800 hover:bg-emerald-900 rounded-xl text-white"
             >
               Explore Collection

@@ -25,7 +25,7 @@ const OrderSuccess = () => {
         </p>
 
         <Link
-          to="/shop"
+          to="/menu"
           className="mt-6 inline-block bg-emerald-800 text-white px-6 py-3 rounded-lg"
         >
           Continue Shopping

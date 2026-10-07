@@ -16,6 +16,7 @@ import addCups from './routes/AddCups.js';
 import paymentRoutes from "./routes/payment.routes.js";
 import cookieParser from "cookie-parser";
 import allOrdersRoutes from './routes/allOrdersRoutes.js';
+import notificationRoutes from "./routes/notification.routes.js";
 
 // Connect to Database
 connectDB();
@@ -50,6 +51,10 @@ app.use("/api/payment", paymentRoutes);
 
 //all orders route
 app.use('/api/orders', allOrdersRoutes);
+
+
+// notification routes
+app.use("/api/notifications", notificationRoutes);
 
 
 const PORT = process.env.PORT || 3000;

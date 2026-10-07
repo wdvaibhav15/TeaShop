@@ -112,7 +112,7 @@ const ProductDetailsPage = () => {
             {error || "Item does not exist."}
           </p>
           <Link
-            to="/shop"
+            to="/menu"
             className="px-4 py-2 bg-emerald-800 text-white text-xs font-semibold rounded-xl hover:bg-emerald-900 transition-colors inline-block"
           >
             Back to Menu
@@ -158,7 +158,7 @@ const ProductDetailsPage = () => {
           Home
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <Link to="/shop" className="hover:text-emerald-800">
+        <Link to="/menu" className="hover:text-emerald-800">
           Menu
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />

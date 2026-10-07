@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import genToken from "../utils/token.js";
 import nodemailer from "nodemailer";
+import Subscriber from "../models/subscriber.model.js";
 
 // REGISTER LOGIC
 export const registerUser = async (req, res) => {
@@ -306,6 +307,147 @@ export const resetPassword = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+// SUBSCRIBERS
+export const sendSubscriptionEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const existingSubscriber = await Subscriber.findOne({ email });
+
+    if (existingSubscriber) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already subscribed, please try with a different email",
+      });
+    }
+
+    await Subscriber.create({ email });
+
+    // Nodemailer Transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // Welcome Email
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Welcome to The Camellia Society 🍵",
+      html: `
+      <div style="font-family: Arial, sans-serif; background:#f4f4f4; padding:20px;">
+        <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+          <div style="background:#0f766e; color:white; text-align:center; padding:25px;">
+            <h1>🍵 Camellia Leaf Tea Co.</h1>
+            <p>Welcome to The Camellia Society</p>
+          </div>
+
+          <div style="padding:30px;">
+            <h2>Hello Tea Lover,</h2>
+
+            <p>
+              Thank you for joining our quiet steeping circle.
+              You'll now receive seasonal harvest updates,
+              exclusive tea releases, and special offers.
+            </p>
+
+            <div style="text-align:center; margin:30px 0;">
+              <span style="
+                display:inline-block;
+                background:#fef3c7;
+                color:#92400e;
+                font-size:28px;
+                font-weight:bold;
+                letter-spacing:4px;
+                padding:15px 30px;
+                border-radius:8px;
+                border:2px dashed #f59e0b;
+              ">
+                WELCOME15
+              </span>
+            </div>
+
+            <p>
+              Use this code at checkout to enjoy
+              <strong>15% OFF</strong> your first order.
+            </p>
+
+            <p>
+              We look forward to sharing exceptional teas with you.
+            </p>
+
+            <br/>
+
+            <p>
+              Warm Regards,<br/>
+              <strong>Camellia Leaf Tea Co.</strong>
+            </p>
+          </div>
+
+          <div style="
+            background:#f8fafc;
+            text-align:center;
+            padding:15px;
+            color:#64748b;
+            font-size:12px;
+          ">
+            © ${new Date().getFullYear()} Camellia Leaf Tea Co.<br/>
+            This is an automated email. Please do not reply.
+          </div>
+
+        </div>
+      </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(201).json({
+      success: true,
+      message: "Successfully subscribed. Welcome email sent.",
+    });
+
+  } catch (error) {
+    console.error("Subscription Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// GET ALL SUBSCRIBERS DATA
+export const getAllSubscribers = async (req, res) => {
+  try {
+    const subscribers = await Subscriber.find()
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      subscribers,
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

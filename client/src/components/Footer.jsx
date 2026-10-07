@@ -45,7 +45,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-stone-400">
               <li>
-                <Link to="/shop" className="hover:text-emerald-400 transition-colors">
+                <Link to="/menu" className="hover:text-emerald-400 transition-colors">
                   All Loose Leaf Teas
                 </Link>
               </li>

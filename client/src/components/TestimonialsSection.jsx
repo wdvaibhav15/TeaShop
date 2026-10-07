@@ -4,7 +4,7 @@ import { TESTIMONIALS } from "../data/mockData";
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-16 md:py-24 bg-stone-50/70 dark:bg-stone-900/30">
+    <section className="py-12 md:py-6 bg-stone-50/70 dark:bg-stone-900/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 dark:text-emerald-400">

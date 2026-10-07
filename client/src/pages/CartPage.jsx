@@ -49,7 +49,7 @@ const CartPage = () => {
           </p>
 
           <button
-            onClick={() => navigate("/shop")}
+            onClick={() => navigate("/menu")}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl cursor-pointer transition-colors"
           >
             Browse Menu

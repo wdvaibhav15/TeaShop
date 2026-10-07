@@ -60,7 +60,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/shop" element={<MenuCard />} />
+          <Route path="/menu" element={<MenuCard />} />
           <Route path="/order/:id" element={<ProductDetailsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/my-orders"element={<MyOrders />}/>

@@ -108,7 +108,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           >
             <div className="flex items-center gap-3">
               <BarChart3 className="w-4 h-4" />
-              <span>Sales & Trends</span>
+              <span>Customers / Subscribers</span>
             </div>
           </button>
 

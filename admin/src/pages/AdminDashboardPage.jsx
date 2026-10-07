@@ -4,6 +4,8 @@ import AddCoffee from "../components/AddCoffee";
 import MenuCard from "../components/MenuCard";
 import FeedbackTable from "../components/FeedBackTable";
 import AllOrders from "../components/AllOrders";
+import Subscribers from "../components/Subscribers";
+import Dashboard from "../components/Dashboard";
 
 const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -21,7 +23,7 @@ const AdminDashboardPage = () => {
 
         {activeTab === "overview" && (
           <div>
-            <h2 className="text-xl font-bold">Overview Dashboard</h2>
+            <Dashboard />
             {/* Overview content */}
           </div>
         )}
@@ -61,7 +63,8 @@ const AdminDashboardPage = () => {
 
         {activeTab === "analytics" && (
           <div>
-            <h2 className="text-xl font-bold">Sales & Trends</h2>
+            <h2 className="text-xl font-bold">Customers Analytics</h2>
+            <Subscribers />
           </div>
         )}
 

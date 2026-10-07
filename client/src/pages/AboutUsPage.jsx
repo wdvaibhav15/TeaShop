@@ -196,7 +196,7 @@ const AboutUsPage = () => {
           Discover teas that will reshape your perception of flavor, aroma, and peaceful clarity.
         </p>
         <Link
-          to="/shop"
+          to="/menu"
           className="inline-block px-8 py-3.5 bg-amber-200 text-emerald-950 font-bold text-sm rounded-2xl hover:bg-amber-100 transition-colors shadow-lg"
         >
           Explore the Tea Catalog

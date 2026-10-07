@@ -9,10 +9,10 @@ export default function HeroSection() {
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-emerald-100/50 dark:bg-emerald-950/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-amber-100/60 dark:bg-amber-950/20 blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-10 mb-0 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Text Content */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-900/10 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-300 text-xs font-semibold tracking-wide border border-emerald-800/20">
               <Leaf className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
               <span>Spring First Flush 2025 Reserve Just Landed</span>
@@ -32,7 +32,7 @@ export default function HeroSection() {
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
               <Link
-                to="/shop"
+                to="/menu"
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-emerald-800 hover:bg-emerald-900 active:scale-98 text-amber-50 text-sm font-semibold rounded-2xl shadow-lg shadow-emerald-900/20 hover:shadow-xl transition-all"
               >
                 <span>Explore Curated Shop</span>
@@ -120,6 +120,7 @@ export default function HeroSection() {
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </section>

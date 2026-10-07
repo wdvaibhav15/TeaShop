@@ -1,21 +1,55 @@
 import React, { useState } from "react";
 import { Mail, CheckCircle, Sparkles } from "lucide-react";
-
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
-  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) {
-      showToast("Please enter a valid email address.", "error");
-      return;
-    }
-    setSubscribed(true);
-    showToast("Welcome to the Tea Society! Use code 'WELCOME15' for 15% off.");
+  const showToast = (message, type) => {
+    toast(message, {
+      icon: type === "success" ? <CheckCircle /> : <Sparkles />,
+    });
   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!email || !email.includes("@")) {
+    showToast("Please enter a valid email address.", "error");
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_CLIENT_API_URL}/api/auth/subscribed`,
+      { email }
+    );
+
+    if (response.data.success) {
+      setSubscribed(true);
+
+      showToast(
+        "Welcome to the Tea Society! ",
+        "success"
+      );
+
+      setEmail("");
+    } else {
+      showToast(
+        response.data.message || "Failed to subscribe.",
+        "error"
+      );
+    }
+  } catch (error) {
+    showToast(
+      error.response?.data?.message ||
+        "Failed to subscribe. Please try again.",
+      "error"
+    );
+  }
+};
 
   return (
     <section className="py-16 md:py-20 bg-stone-900 text-stone-100 border-t border-stone-800 relative overflow-hidden">
