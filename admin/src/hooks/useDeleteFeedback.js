@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { removeFeedBackUser } from "../redux/feedbackSlice";
-
+import toast from "react-hot-toast";
 const useDeleteFeedback = () => {
   const dispatch = useDispatch();
 
@@ -16,7 +16,7 @@ const useDeleteFeedback = () => {
       const response = await axios.delete(
         `${import.meta.env.VITE_CLIENT_API_URL}/api/admin/userfeedback/${id}`
       );
-
+      toast.success("Feedback deleted successfully");
       if (response.data.success) {
         dispatch(removeFeedBackUser(id));
       }
