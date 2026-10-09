@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   ShoppingBag,
-  Heart,
   User,
   Menu,
   ChevronDown,
@@ -13,43 +13,54 @@ import { FaHeart } from "react-icons/fa";
 import { logoutUser } from "../redux/userSlice";
 import toast from "react-hot-toast";
 import { setSearchTerm } from "../redux/searchSlice";
-import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const location = useLocation();
   const menuPage = location.pathname === "/menu";
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [searchInput, setSearchInput] = useState("");
   const [userDropdown, setUserDropdown] = useState(false);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "light"
+  );
+
   const user = useSelector((state) => state.user?.user);
-  const navigate = useNavigate();
-  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
+  const wishlistItems = useSelector(
+    (state) => state.wishlist?.wishlistItems || []
+  );
 
-  const handleOrders = () => {
+  // Ref must wrap the user button AND its dropdown.
+  const userDropdownRef = useRef(null);
+
+  // Close dropdown when clicking anywhere outside it.
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target)
+      ) {
+        setUserDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
+  // Close dropdown when navigating to another page.
+  useEffect(() => {
     setUserDropdown(false);
-    navigate("/my-orders");
-  };
+  }, [location.pathname]);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-
-    setSearchInput(value); // local input state
-    dispatch(setSearchTerm(value)); // redux state
-  };
-
-  const handleLogout = () => {
-    setUserDropdown(false);
-    dispatch(logoutUser());
-    toast.success("Logged out successfully");
-    console.log("User logged out successfully.");
-    // Clear user tokens/session data from localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    // Redirect user to the login screen
-    navigate("/");
-  };
-
+  // Apply and save theme.
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -60,27 +71,52 @@ const Navbar = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  const handleOrders = () => {
+    setUserDropdown(false);
+    navigate("/my-orders");
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    dispatch(setSearchTerm(value));
+  };
+
+  const handleLogout = () => {
+    setUserDropdown(false);
+
+    dispatch(logoutUser());
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
+
   return (
-    /* Header stays sticky right below Announcement (top-8 / 32px offset) */
     <header className="sticky top-8 z-40 w-full backdrop-blur-md bg-stone-50/90 dark:bg-stone-950/90 border-b border-stone-200/80 dark:border-stone-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl bg-emerald-800 text-amber-100 flex items-center justify-center font-serif text-lg font-bold shadow-sm group-hover:bg-emerald-700 transition-colors">
               🍵
             </div>
+
             <div>
               <span className="font-serif text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 block leading-none">
                 Camellia Leaf
               </span>
+
               <span className="text-[10px] tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold uppercase">
                 Artisanal Tea Co.
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-stone-700 dark:text-stone-300">
             <Link
               to="/"
@@ -88,6 +124,7 @@ const Navbar = () => {
             >
               Home
             </Link>
+
             <Link
               to="/menu"
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
@@ -101,6 +138,7 @@ const Navbar = () => {
             >
               About Us
             </Link>
+
             <Link
               to="/contact"
               className="hover:text-emerald-800 dark:hover:text-emerald-400 transition-colors"
@@ -112,65 +150,74 @@ const Navbar = () => {
           {/* Search Bar */}
           {menuPage && (
             <div className="relative hidden lg:block max-w-xs w-full">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search teas, origins, aromas..."
-                  value={searchInput}
-                  onChange={handleSearch}
-                  className="w-full bg-stone-100/90 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-700 transition-all"
-                />
-                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
-              </div>
+              <input
+                type="text"
+                placeholder="Search teas, origins, aromas..."
+                value={searchInput}
+                onChange={handleSearch}
+                className="w-full bg-stone-100/90 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-700 transition-all"
+              />
+
+              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
             </div>
           )}
 
-          {/* Right Action Icons: Wishlist, Cart, User */}
+          {/* Right Action Icons */}
           <div className="flex items-center gap-2.5">
+
+            {/* Wishlist */}
             <Link
               to="/wishlist"
-              className="relative p-2 text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center"
               aria-label="Wishlist"
+              className="relative p-2 text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center"
             >
-              <div
-                onClick={() => navigate("/wishlist")}
-                className="relative cursor-pointer"
-              >
-                <FaHeart size={22} />
+              <FaHeart size={22} />
 
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </div>
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-5 h-5 flex items-center justify-center px-1 rounded-full">
+                  {wishlistItems.length}
+                </span>
+              )}
             </Link>
 
+            {/* Cart */}
             <Link
               to="/cart"
-              className="relative p-2 text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center"
               aria-label="Cart"
+              className="relative p-2 text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center"
             >
               <ShoppingBag className="w-5 h-5" />
             </Link>
 
             {/* User Dropdown */}
-            <div className="relative">
-              <div
+            <div className="relative" ref={userDropdownRef}>
+              <button
+                type="button"
+                aria-expanded={userDropdown}
+                aria-haspopup="true"
+                onClick={() =>
+                  setUserDropdown((prev) => !prev)
+                }
                 className="flex items-center gap-1.5 p-1.5 pl-2 pr-2.5 rounded-full border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-900 text-xs font-medium cursor-pointer"
-                onClick={() => setUserDropdown((prev) => !prev)}
               >
                 <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 flex items-center justify-center">
                   <User className="w-3 h-3" />
                 </div>
+
                 <span className="hidden sm:inline font-medium max-w-[90px] truncate">
-                  {user ? user.name : "Account"}
+                  {user ? user.name || user.email : "Account"}
                 </span>
-                <ChevronDown className="w-3 h-3 text-stone-400" />
-              </div>
+
+                <ChevronDown
+                  className={`w-3 h-3 text-stone-400 transition-transform ${
+                    userDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
               {userDropdown && (
                 <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xl py-2 z-50">
+
                   {!user ? (
                     <>
                       <Link
@@ -193,15 +240,15 @@ const Navbar = () => {
                     </>
                   ) : (
                     <div className="flex flex-col gap-1">
-                      <p className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 font-semibold">
-                        <User className="w-4 h-4" />
+                      <p className="flex items-center gap-2 px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-400 font-semibold break-all">
+                        <User className="w-4 h-4 shrink-0" />
                         {user.email}
                       </p>
 
                       <button
                         type="button"
                         onClick={handleOrders}
-                        className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs  hover:bg-red-50 dark:hover:bg-red-950/30 font-semibold"
+                        className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs text-stone-700 dark:text-stone-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-semibold"
                       >
                         <User className="w-4 h-4" />
                         My Orders
@@ -223,9 +270,9 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl"
-              aria-label="Toggle menu"
               type="button"
+              aria-label="Toggle menu"
+              className="md:hidden p-2 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl"
             >
               <Menu className="w-6 h-6" />
             </button>

@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,17 +22,22 @@ const useAllOrders = () => {
         console.log("All Orders:", response.data);
 
         if (response.data.success) {
-          dispatch(setAllOrders(response.data.orders));
+          dispatch(setAllOrders(response.data.orders || []));
         }
       } catch (error) {
-        console.log("Error fetching all orders:", error);
+        console.error("Error fetching all orders:", error);
       }
     };
 
     fetchAllOrders();
   }, [dispatch]);
 
-  return orders;
+  // Calculate total revenue from all orders
+  const totalRevenue = (orders || []).reduce((total, order) => {
+    return total + (Number(order.amount) || 0);
+  }, 0);
+
+  return { orders, totalRevenue };
 };
 
 export default useAllOrders;
