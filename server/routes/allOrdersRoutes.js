@@ -1,8 +1,13 @@
 import express from 'express';
-import { getAllOrders } from '../controllers/adminController.js';
+import { getAllOrders, getUserOrdersOnly } from '../controllers/adminController.js';
+import { isAuthenticated } from '../middlewares/isAuthenticated.js';
 const router = express.Router();
 
-router.get('/orders', getAllOrders);
+// admin
+router.get('/orders', isAuthenticated, getAllOrders);
+
+// Customer
+router.get("/user-orders",isAuthenticated, getUserOrdersOnly);
 
 
 

@@ -561,3 +561,28 @@ export const getCafeSettings = async (req, res) => {
     });
   }
 };
+
+
+// GET ONLY THE LOGGED-IN CUSTOMER'S ORDERS
+export const getUserOrdersOnly = async (req, res) => {
+  try {
+    // Set by your authentication middleware
+    const userId = req.user._id;
+
+    const orders = await Order.find({ userId })
+      .populate("coffeeId", "coffeeTitle")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get my orders error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch your orders",
+    });
+  }
+};
