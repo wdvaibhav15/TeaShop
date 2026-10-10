@@ -15,6 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/userSlice";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Navbar = ({ activePage = "Overview" }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -32,6 +33,20 @@ const Navbar = ({ activePage = "Overview" }) => {
   const currentUser = useSelector(
     (state) => state.user?.currentUser
   );
+  const filterRecentNotifications = (notifications) => {
+  const now = Date.now();
+  const twentyFourHours = 24 * 60 * 60 * 1000;
+
+  return notifications.filter((item) => {
+    const createdAt = new Date(item.createdAt).getTime();
+
+    return (
+      Number.isFinite(createdAt) &&
+      now - createdAt < twentyFourHours &&
+      now >= createdAt
+    );
+  });
+};
 
   // Recover the saved user after a page refresh.
   const savedUser = (() => {
@@ -71,8 +86,10 @@ const Navbar = ({ activePage = "Overview" }) => {
 
         if (isMounted && response.data.success) {
           setNotifications(
-            response.data.notifications || []
-          );
+  filterRecentNotifications(
+    response.data.notifications || []
+  )
+);
         }
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
@@ -117,20 +134,25 @@ const Navbar = ({ activePage = "Overview" }) => {
   }, []);
 
   // Logout explicitly.
-  const handleLogout = () => {
-    setIsProfileOpen(false);
-    setIsNotificationOpen(false);
 
-    // Remove persistent authentication first.
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+const handleLogout = () => {
+  setIsProfileOpen(false);
+  setIsNotificationOpen(false);
 
-    // Update Redux.
-    dispatch(logoutUser());
+  // Remove authentication data
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-    // Replace the current history entry.
-    navigate("/", { replace: true });
-  };
+  // Update Redux
+  dispatch(logoutUser());
+
+  // Show logout success notification
+  toast.success("Logged out successfully! 👋");
+
+  // Navigate to home
+  navigate("/", { replace: true });
+};
+
 
   // Never send an authenticated admin back to the entry page.
   const handleLoginClick = () => {

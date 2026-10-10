@@ -93,7 +93,7 @@ const handleSubmit = async (e) => {
             </div>
             <button
               type="submit"
-              className="px-6 py-3 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white text-sm font-semibold rounded-2xl shadow-lg transition-all"
+              className="px-6 py-3 bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white text-sm font-semibold rounded-2xl shadow-lg transition-all cursor-pointer"
             >
               Subscribe
             </button>

@@ -47,14 +47,7 @@ const AdminWelcome = () => {
         {/* Action Buttons: Login & Registration */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
 
-          <button
-            type="button"
-            onClick={() => navigate("/registration")}
-            className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl bg-[#172D23] hover:bg-[#234938] text-white font-semibold text-sm border border-[#264436] hover:border-[#3A6B53] transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <UserPlus className="w-4 h-4 text-[#A1B8AD]" />
-            <span>Register Store</span>
-          </button>
+         
 
           
           <button

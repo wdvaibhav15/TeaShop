@@ -59,8 +59,9 @@ const LoginPage = () => {
   navigate("/");
 }
     } catch (error) {
-      console.error("Server Error Response:", error.response?.data);
-      alert(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error(
+        error.response?.data?.message || "Login failed"
+      )
     }
   };
 

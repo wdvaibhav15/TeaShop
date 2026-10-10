@@ -12,6 +12,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../redux/userSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -35,14 +36,14 @@ const Login = () => {
         localStorage.setItem("token", response.data.token);
 
         localStorage.setItem("user", JSON.stringify(response.data.user));
-
+        toast.success("Login successful");
         dispatch(setCurrentUser(response.data.user));
 
         navigate("/admin-dashboard");
       }
     } catch (error) {
       console.error("Server Error Response:", error.response?.data);
-      alert(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error(error.response?.data.message || "Server Error");
     }
   };
 

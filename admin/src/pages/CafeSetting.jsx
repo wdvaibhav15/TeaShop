@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MapPin, Mail, Phone, Clock, Save } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const CafeSetting = () => {
   const [cafeName, setCafeName] = useState("Camellia Leaf");
@@ -31,7 +32,7 @@ const CafeSetting = () => {
 
     console.log(response.data);
 
-    alert("Cafe settings saved successfully!");
+    toast.success("Cafe settings saved successfully");
   } catch (error) {
     console.log(error);
 

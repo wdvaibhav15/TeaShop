@@ -22,7 +22,17 @@ const useAllOrders = () => {
         console.log("All Orders:", response.data);
 
         if (response.data.success) {
-          dispatch(setAllOrders(response.data.orders || []));
+          const allOrders = response.data.orders || [];
+
+          // Hide orders whose coffee reference is missing
+          const filteredOrders = allOrders.filter((order) => {
+            if (order.coffeeId === null) return false;
+            if (order.coffee === null) return false;
+
+            return true;
+          });
+
+          dispatch(setAllOrders(filteredOrders));
         }
       } catch (error) {
         console.error("Error fetching all orders:", error);
@@ -32,12 +42,12 @@ const useAllOrders = () => {
     fetchAllOrders();
   }, [dispatch]);
 
-  // Calculate total revenue from all orders
+  // Calculate revenue using the filtered orders
   const totalRevenue = (orders || []).reduce((total, order) => {
     return total + (Number(order.amount) || 0);
   }, 0);
 
-  return { orders, totalRevenue };
+  return { orders: orders || [], totalRevenue };
 };
 
 export default useAllOrders;

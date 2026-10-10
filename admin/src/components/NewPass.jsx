@@ -34,7 +34,7 @@ const NewPass = () => {
             );
 
             if (response.data.success) {
-                
+                toast.success("Password updated successfully");
                 navigate("/AdminDashboard");
             }
         } catch (error) {

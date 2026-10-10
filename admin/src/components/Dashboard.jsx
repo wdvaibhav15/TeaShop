@@ -98,6 +98,19 @@ const Dashboard = () => {
 
   const [showAllOrders, setShowAllOrders] = useState(false);
 
+  
+
+// Hide orders whose coffee item has been deleted
+const visibleOrders = (orders || []).filter((order) => {
+  // Works when the backend populates coffeeId
+  if (order.coffeeId === null) return false;
+
+  // Also works when the backend returns a separate coffee field
+  if (order.coffee === null) return false;
+
+  return true;
+});
+
   if (showAllOrders) {
     return <AllOrders />;
   }
@@ -198,7 +211,7 @@ const Dashboard = () => {
               </thead>
 
               <tbody>
-                {orders.slice(0, 6).map((order) => (
+                {visibleOrders.slice(0, 6).map((order) => (
                   <tr key={order._id} className="border-b border-stone-800">
                     <td className="py-4 px-4 text-white">{order.quantity}</td>
 

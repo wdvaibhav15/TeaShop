@@ -2,6 +2,9 @@
 import React, { useEffect, useRef } from "react";
 import VanillaTilt from "vanilla-tilt";
 import useMenuItems from "../hooks/useMenuItems";
+import { Trash2 } from "lucide-react";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 // Sub-component for the 3D tilt effect
 const TiltCard = ({ children, className }) => {
@@ -67,6 +70,54 @@ const MenuCard = () => {
       </div>
     );
   }
+
+  
+const handleDelete = async (item) => {
+  const id = item._id || item.id;
+
+  if (!id) {
+    toast.error("Coffee ID not found!");
+    return;
+  }
+
+  const title =
+    item.coffeeTitle || item.title || item.name || "this coffee";
+
+  const confirmed = window.confirm(
+    `Are you sure you want to delete "${title}"?`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.delete(
+      `${import.meta.env.VITE_CLIENT_API_URL}/api/coffee/delete-coffee/${id}`,
+      {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {},
+        withCredentials: true,
+      }
+    );
+
+    // Show success notification
+    toast.success(`${title} deleted successfully!`);
+
+    // Refresh the menu after a short delay
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  } catch (error) {
+    console.error("Delete coffee error:", error);
+
+    toast.error(
+      error.response?.data?.message || "Failed to delete coffee!"
+    );
+  }
+};
+
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -163,6 +214,14 @@ const MenuCard = () => {
                         : "0.00"}
                     </span>
                   </div>
+                  <button
+    type="button"
+    onClick={() => handleDelete(item)}
+    className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-50 text-red-600 border border-red-200 px-4 py-2.5 text-sm font-semibold hover:bg-red-600 hover:text-white transition-colors"
+  >
+    <Trash2 size={16} />
+    Delete Coffee
+  </button>
                 </div>
               </TiltCard>
             );

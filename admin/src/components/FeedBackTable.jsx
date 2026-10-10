@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import useFeedBack from "../hooks/useFeedBack";
 import ViewMessage from "./ViewMessage";
 import useDeleteFeedback from "../hooks/useDeleteFeedback";
+import toast from "react-hot-toast";
 
 const FeedbackTable = () => {
   const feedbacks = useFeedBack();
@@ -14,6 +15,7 @@ const FeedbackTable = () => {
 
   const handleDelete = async (id) => {
     await deleteFeedback(id);
+    
   };
 
   return (

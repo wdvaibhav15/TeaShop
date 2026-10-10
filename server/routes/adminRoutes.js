@@ -1,10 +1,10 @@
 import express from 'express';
-import { adminLogin, adminLogout, adminRegister, adminSendResetOTP, adminVerifyOTP, adminVesetPassword, cafeSettings, deleteFeedback, getAllFeedbacks, getCafeSettings, userFeedback } from '../controllers/adminController.js';
+import { adminLogin, adminLogout, adminSendResetOTP, adminVerifyOTP, adminVesetPassword, cafeSettings, deleteFeedback, getAllFeedbacks, getCafeSettings, userFeedback } from '../controllers/adminController.js';
 
 
 const router = express.Router();
 
-router.post('/register', adminRegister);
+
 router.post('/login', adminLogin);
 router.get('/logout', adminLogout);
 router.post("/forgot-password",adminSendResetOTP);

@@ -10,49 +10,49 @@ import Cafe from "../models/cafe.model.js";
 
 
 // LOGIN REGISTRATION
-export const adminRegister = async (req, res) => {
-  try {
-    const { email, password, confirmPassword } = req.body;
+// export const adminRegister = async (req, res) => {
+//   try {
+//     const { email, password, confirmPassword } = req.body;
 
-    if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Passwords do not match." });
-    }
+//     if (password !== confirmPassword) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Passwords do not match." });
+//     }
 
-    const existingUser = await Admin.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists." });
-    }
+//     const existingUser = await Admin.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists." });
+//     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new Admin({
-      email,
-      password: hashedPassword,
-    });
+//     const user = new Admin({
+//       email,
+//       password: hashedPassword,
+//     });
 
-    await user.save();
-    const token = await genToken(user._id);
+//     await user.save();
+//     const token = await genToken(user._id);
 
-    res.cookie("token", token, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+//     res.cookie("token", token, {
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "strict",
+//       httpOnly: true,
+//       maxAge: 1000 * 60 * 60 * 24 * 7,
+//     });
 
-    res
-      .status(201)
-      .json({ user, success: true, message: "Admin registered successfully!" });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error during registration.",
-      error: error.message,
-    });
-  }
-};
+//     res
+//       .status(201)
+//       .json({ user, success: true, message: "Admin registered successfully!" });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error during registration.",
+//       error: error.message,
+//     });
+//   }
+// };
 
 // LOGIN LOGIC
 export const adminLogin = async (req, res) => {
@@ -471,14 +471,21 @@ export const deleteFeedback = async (req, res) => {
 };
 
 // GET ALL ORDERS
+
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("coffeeId", "coffeeTitle")
       .sort({ createdAt: -1 });
 
-    const formattedOrders = orders.map((order) => ({
-      coffeeName: order.coffeeId?.coffeeTitle,
+    // Remove orders whose coffee has been deleted
+    const visibleOrders = orders.filter(
+      (order) => order.coffeeId !== null
+    );
+
+    const formattedOrders = visibleOrders.map((order) => ({
+      _id: order._id,
+      coffeeName: order.coffeeId.coffeeTitle,
       quantity: order.quantity,
       amount: order.amount,
       paymentStatus: order.paymentStatus,
@@ -486,13 +493,12 @@ export const getAllOrders = async (req, res) => {
       time: order.createdAt.toLocaleTimeString(),
     }));
 
-    
     return res.status(200).json({
       success: true,
       orders: formattedOrders,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching orders:", error);
 
     return res.status(500).json({
       success: false,
@@ -500,6 +506,7 @@ export const getAllOrders = async (req, res) => {
     });
   }
 };
+
 
 //  SET CAFE SETTINGS
 export const cafeSettings = async (req, res) => {

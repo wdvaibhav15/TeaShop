@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Trash2 } from 'lucide-react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const AddCoffee = ({ onClose }) => {
   const [coffeeTitle, setCoffeeTitle] = useState('');
@@ -64,8 +65,9 @@ const AddCoffee = ({ onClose }) => {
           onClose();
         }
       }
+      toast.success('Coffee added successfully');
     } catch (error) {
-      console.error('Error adding coffee:', error);
+      toast.error(error.response?.data?.message || 'Failed to add coffee');
     } finally {
       setLoading(false);
     }

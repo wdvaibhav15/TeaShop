@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, ArrowRight, ArrowLeft } from 'lucide-react'; // Or use standard SVGs
-
+import toast from 'react-hot-toast';
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,6 +17,7 @@ const ResetPassword = () => {
       });
       if (data.success) {
         // Redirect to OTP verification page, passing the email state
+        toast.success("OTP Sent successfully");
         navigate('/verify-otp', { state: { email } });
       }
     } catch (error) {

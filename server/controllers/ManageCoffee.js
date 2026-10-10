@@ -99,19 +99,37 @@ export const getCoffeeById = async (req, res) => {
 // DELETE CUP
 export const deleteCoffee = async (req, res) => {
   try {
-    const { id } = req.body;
-    const coffeeId = id || req.params.id;
+    const { id } = req.params;
 
-    const deletedCoffee = await Coffee.findByIdAndDelete(coffeeId);
+    // Validate MongoDB ObjectId
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid coffee ID.",
+      });
+    }
+
+    // Find and delete the particular coffee
+    const deletedCoffee = await Coffee.findByIdAndDelete(id);
+
+    if (!deletedCoffee) {
+      return res.status(404).json({
+        success: false,
+        message: "Coffee not found.",
+      });
+    }
+
     return res.status(200).json({
-      message: "Coffee Deleted Successfully",
       success: true,
-      data: deletedCoffee
+      message: "Coffee deleted successfully.",
+      coffee: deletedCoffee,
     });
   } catch (error) {
+    console.error("Delete coffee error:", error);
+
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to delete coffee"
+      message: "Internal server error while deleting coffee.",
     });
   }
 };

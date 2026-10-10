@@ -10,6 +10,7 @@ router.post('/add-coffee', upload.single('imageFile'), addCoffee);
 router.get('/get-coffees', getCoffeeData);
 router.get('/get-coffees/:id', getCoffeeById);
 router.post('/delete-coffee', deleteCoffee);
-router.delete('/delete-coffee/:id', deleteCoffee);
+
+router.delete("/delete-coffee/:id", deleteCoffee);
 
 export default router;

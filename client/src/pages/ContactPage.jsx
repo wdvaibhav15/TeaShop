@@ -7,10 +7,15 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
 import useCafeSettings from "../hooks/useCafeSettings";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const ContactPage = () => {
   const dispatch = useDispatch();
   const cafeData = useCafeSettings();
+
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,6 +27,13 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isLoggedIn) {
+    toast.error("Please log in to send an inquiry.");
+
+    navigate("/login");
+    return;
+  }
 
     try {
       setLoading(true);
@@ -84,8 +96,8 @@ const ContactPage = () => {
         <div className="lg:col-span-5 space-y-8">
           <div className="bg-stone-50 dark:bg-stone-900/60 p-8 rounded-3xl border border-stone-200/80 dark:border-stone-800 space-y-6">
             <h3 className="font-serif-tea text-2xl font-bold text-stone-900 dark:text-stone-100">
-  {cafeData?.cafeName || "Teahouse Headquarters"}
-</h3>
+              {cafeData?.cafeName || "Teahouse Headquarters"}
+            </h3>
 
             <div className="space-y-4 text-sm text-stone-600 dark:text-stone-300">
               <div className="flex items-start gap-3">
@@ -102,11 +114,11 @@ const ContactPage = () => {
                     Direct Email:
                   </span>
                   <a
-  href={`mailto:${cafeData?.cafeEmail}`}
-  className="hover:text-emerald-700 underline"
->
-  {cafeData?.cafeEmail}
-</a>
+                    href={`mailto:${cafeData?.cafeEmail}`}
+                    className="hover:text-emerald-700 underline"
+                  >
+                    {cafeData?.cafeEmail}
+                  </a>
                 </div>
               </div>
 
@@ -128,8 +140,8 @@ const ContactPage = () => {
                   </span>
 
                   <div className="text-xs space-y-1 mt-1 text-stone-500 dark:text-stone-400">
-  {cafeData?.cafeTiming}
-</div>
+                    {cafeData?.cafeTiming}
+                  </div>
                 </div>
               </div>
             </div>
@@ -163,7 +175,7 @@ const ContactPage = () => {
                 <button
                   type="button"
                   onClick={handleResetForm}
-                  className="text-emerald-700 font-semibold underline"
+                  className="text-emerald-700 font-semibold underline cursor-pointer"
                 >
                   Send Another Message
                 </button>
@@ -210,7 +222,7 @@ const ContactPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-800 text-white flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="cursor-pointer w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-800 text-white flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   <Send size={16} />
                   {loading ? "Sending..." : "Send Message"}

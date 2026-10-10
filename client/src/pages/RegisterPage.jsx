@@ -17,6 +17,14 @@ const RegisterPage =() => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if(name === "" || email === "" || password === "" || confirmPassword === "") {
+      toast.error("All fields are required");
+      return;
+    }
+    if(password !== confirmPassword) {
+      toast.error("Oops! Please check your passwords");
+      return;
+    }
     try {
       const response = await axios.post(`${import.meta.env.VITE_CLIENT_API_URL}/api/auth/register`, {
         name,
