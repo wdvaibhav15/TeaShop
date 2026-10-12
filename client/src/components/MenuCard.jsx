@@ -1,34 +1,47 @@
-
 import React, { useEffect, useRef } from "react";
 import VanillaTilt from "vanilla-tilt";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { Search, ShoppingBag } from "lucide-react";
+import { FaHeart } from "react-icons/fa";
+
 import { addToCart } from "../redux/cartSlice";
 import {
   addToWishlist,
   removeFromWishlist,
 } from "../redux/wishlistSlice";
-import { FaHeart } from "react-icons/fa";
+import { setSearchTerm } from "../redux/searchSlice";
 import useProductsData from "../hooks/useProductsData";
 
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
+
+// Tilt effect for desktop and hover-capable devices.
 const TiltCard = ({ children, className }) => {
   const tiltRef = useRef(null);
 
   useEffect(() => {
-    const tiltNode = tiltRef.current;
+    const node = tiltRef.current;
 
-    if (tiltNode) {
-      VanillaTilt.init(tiltNode, {
-        max: 15,
-        speed: 400,
-        glare: true,
-        "max-glare": 0.2,
-        scale: 1.02,
-      });
+    if (
+      !node ||
+      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    ) {
+      return undefined;
     }
 
-    return () => tiltNode?.vanillaTilt?.destroy();
+    VanillaTilt.init(node, {
+      max: 6,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.12,
+      scale: 1.01,
+    });
+
+    return () => {
+      node.vanillaTilt?.destroy();
+    };
   }, []);
 
   return (
@@ -42,21 +55,23 @@ const MenuCard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { items, loading, error } = useProductsData();
+  const {
+    items = [],
+    loading,
+    error,
+  } = useProductsData();
 
   const wishlistItems = useSelector(
-    (state) => state.wishlist.wishlistItems
+    (state) => state.wishlist?.wishlistItems || []
   );
 
   const searchTerm = useSelector(
-    (state) => state.search.searchTerm
+    (state) => state.search?.searchTerm || ""
   );
 
-  const DEFAULT_IMAGE =
-    "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
-
+  // Toggle wishlist item.
   const handleWishlist = (item) => {
-    const exists = wishlistItems.find(
+    const exists = wishlistItems.some(
       (product) => product._id === item._id
     );
 
@@ -65,172 +80,277 @@ const MenuCard = () => {
       toast.success("Removed from wishlist");
     } else {
       dispatch(addToWishlist(item));
-      toast.success("Added in wishlist");
+      toast.success("Added to wishlist");
     }
   };
 
+  // Add product to cart.
   const handleAddToCart = (item) => {
+    const stock = Number(
+      item.stockCount ?? item.stock ?? 0
+    );
+
+    if (stock <= 0 || item.isAvailable === false) {
+      toast.error("This item is currently unavailable");
+      return;
+    }
+
     dispatch(addToCart(item));
-    toast.success("Item Added in cart");
+    toast.success("Item added to cart");
   };
 
-  const filteredItems =
-    items?.filter((item) => {
-      const searchableText = `
-        ${item.coffeeTitle || ""}
-        ${item.title || ""}
-        ${item.name || ""}
-        ${item.description || ""}
-        ${item.price || ""}
-      `.toLowerCase();
+  // Filter by name, description, category, or price.
+  const normalizedSearch = searchTerm.trim().toLowerCase();
 
-      return searchableText.includes(
-        searchTerm.toLowerCase()
-      );
-    }) || [];
+  const filteredItems = items.filter((item) => {
+    const searchableText = [
+      item.coffeeTitle,
+      item.title,
+      item.name,
+      item.description,
+      item.category,
+      item.price,
+    ]
+      .filter((value) => value !== null && value !== undefined)
+      .join(" ")
+      .toLowerCase();
 
-    console.log("Search Term:", searchTerm);
-    console.log("Filtered Items:", filteredItems.length);
+    return searchableText.includes(normalizedSearch);
+  });
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-6 text-center">
-        <p>Loading menu items...</p>
-      </div>
+      <main className="min-h-screen bg-black px-4 py-16 text-center text-sm text-stone-300">
+        Loading menu items...
+      </main>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto p-6 text-center text-red-500">
-        <p>{error}</p>
-      </div>
+      <main className="min-h-screen bg-black px-4 py-16 text-center text-sm text-red-400">
+        {error}
+      </main>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="mb-14 text-center">
-        <h1 className="text-3xl font-bold text-white mb-4">
-          Coffee & Menu
-        </h1>
+    <main className="min-h-screen overflow-x-hidden bg-black pb-10 pt-5 text-white sm:pt-8">
+      <div className="mx-auto w-full max-w-[1600px] px-3 sm:px-5 lg:px-8">
 
-        <p className="text-gray-400 text-base max-w-4xl mx-auto">
-          Explore our carefully curated selection of handcrafted brews,
-          artisanal roasts, and signature blends.
-        </p>
-      </div>
+        {/* Search bar: mobile only */}
+        <div className="mx-auto mb-6 w-full max-w-md sm:mb-8 sm:max-w-lg md:hidden">
+          <label
+            htmlFor="menu-search"
+            className="sr-only"
+          >
+            Search menu items
+          </label>
 
-      <div className="grid mt-[-2rem] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="relative">
+            <Search
+              size={18}
+              aria-hidden="true"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"
+            />
+
+            <input
+              id="menu-search"
+              type="search"
+              value={searchTerm}
+              onChange={(event) =>
+                dispatch(setSearchTerm(event.target.value))
+              }
+              placeholder="Search teas, coffee, origins..."
+              className="w-full rounded-full border border-stone-800 bg-stone-950 py-2.5 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-stone-500 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-800/30 sm:py-3"
+            />
+          </div>
+        </div>
+
+        {/* Page heading */}
+        <header className="mb-7 text-center sm:mb-9">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-500 sm:text-xs">
+            Crafted with care
+          </p>
+
+          <h1 className="font-serif text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
+            Coffee &amp; Menu
+          </h1>
+
+          <p className="mx-auto mt-2 max-w-2xl px-2 text-xs leading-5 text-stone-400 sm:text-sm sm:leading-6 lg:text-base">
+            Explore our carefully curated selection of handcrafted
+            brews, artisanal roasts, and signature blends.
+          </p>
+        </header>
+
+        {/* Responsive product grid */}
         {filteredItems.length > 0 ? (
-          filteredItems.map((item) => {
-            const stock =
-              item.stockCount ?? item.stock ?? 0;
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-5">
+            {filteredItems.map((item) => {
+              const stock = Number(
+                item.stockCount ?? item.stock ?? 0
+              );
 
-            const inStock =
-              stock > 0 && item.isAvailable !== false;
+              const inStock =
+                stock > 0 && item.isAvailable !== false;
 
-            const title =
-              item.coffeeTitle ||
-              item.title ||
-              item.name;
+              const title =
+                item.coffeeTitle ||
+                item.title ||
+                item.name ||
+                "Specialty Brew";
 
-            return (
-              <TiltCard
-                key={item._id}
-                className="w-90 h-130 bg-gradient-to-b from-stone-900 to-black rounded-3xl overflow-hidden border border-stone-700 hover:border-emerald-500 hover:-translate-y-2 transition-all duration-300 shadow-xl"
-              >
-                <div className="relative">
-                  <div className="relative overflow-hidden h-60">
+              const image =
+                item.imageUrl ||
+                item.image ||
+                DEFAULT_IMAGE;
+
+              const isWishlisted = wishlistItems.some(
+                (product) => product._id === item._id
+              );
+
+              return (
+                <TiltCard
+                  key={item._id}
+                  className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-800 bg-stone-950 shadow-lg transition-colors duration-300 hover:border-emerald-700"
+                >
+                  {/* Product image */}
+                  <div className="relative h-44 overflow-hidden min-[420px]:h-36 sm:h-44 xl:h-40 2xl:h-48">
                     <img
-                      src={
-                        item.imageUrl ||
-                        item.image ||
-                        DEFAULT_IMAGE
-                      }
+                      src={image}
                       alt={title}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = DEFAULT_IMAGE;
+                      }}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                    {/* Category */}
+                    <span className="absolute bottom-2 left-2 rounded-full border border-white/10 bg-black/75 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider text-emerald-400 sm:text-[10px]">
+                      {item.category || "Coffee"}
+                    </span>
+
+                    {/* Wishlist button */}
+                    <button
+                      type="button"
+                      onClick={() => handleWishlist(item)}
+                      aria-label={
+                        isWishlisted
+                          ? `Remove ${title} from wishlist`
+                          : `Add ${title} to wishlist`
+                      }
+                      aria-pressed={isWishlisted}
+                      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/75 transition hover:scale-105"
+                    >
+                      <FaHeart
+                        size={15}
+                        className={
+                          isWishlisted
+                            ? "text-red-500"
+                            : "text-white"
+                        }
+                      />
+                    </button>
                   </div>
-                </div>
 
-                <div className="p-5">
-                  <h3 className="text-2xl font-bold text-white">
-                    {title}
-                  </h3>
+                  {/* Product details */}
+                  <div className="flex flex-1 flex-col p-3 sm:p-3.5">
+                    <h2 className="line-clamp-1 break-words font-serif text-base font-bold text-white sm:text-lg">
+                      {title}
+                    </h2>
 
-                  <p className="text-stone-400 text-sm mt-2 line-clamp-3">
-                    {item.description}
-                  </p>
+                    <p className="mt-1.5 line-clamp-3 min-h-[3.75rem] text-xs leading-5 text-stone-400 sm:text-sm">
+                      {item.description ||
+                        "Discover our carefully selected specialty blend."}
+                    </p>
 
-                  <div className="flex justify-between items-start mt-4">
-                    <div>
-                      <p className="text-stone-400 text-xs mb-1">
-                        Price
-                      </p>
+                    {/* Price and pack size */}
+                    <div className="mt-3 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="mb-0.5 text-[10px] text-stone-500 sm:text-xs">
+                          Price
+                        </p>
 
-                      <span className="text-3xl font-black text-white">
-                        ₹{item.price}
+                        <span className="text-xl font-extrabold text-emerald-500 sm:text-2xl">
+                          ₹{Number(item.price || 0).toFixed(0)}
+                        </span>
+                      </div>
+
+                      <span className="shrink-0 text-[10px] text-stone-500 sm:text-xs">
+                        50g Pack
                       </span>
                     </div>
 
-                    <div className="flex flex-col items-end gap-3">
-                      <FaHeart
-                        size={24}
-                        onClick={() => handleWishlist(item)}
-                        className={`cursor-pointer transition-all duration-300 ${
-                          wishlistItems.some(
-                            (product) =>
-                              product._id === item._id
-                          )
-                            ? "text-red-500"
-                            : "text-gray-400"
-                        }`}
-                      />
-
+                    {/* Action buttons */}
+                    <div className="mt-4 flex items-stretch gap-2">
                       <button
-                        onClick={() =>
-                          handleAddToCart(item)
-                        }
+                        type="button"
+                        onClick={() => handleAddToCart(item)}
                         disabled={!inStock}
-                        className={`px-5 py-2 font-semibold transition-all duration-300 rounded-xl ${
+                        className={`flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold transition sm:text-sm ${
                           inStock
-                            ? "bg-white text-black hover:bg-emerald-500 hover:text-white"
-                            : "bg-gray-700 text-gray-400 cursor-not-allowed"
+                            ? "bg-emerald-800 text-white hover:bg-emerald-700"
+                            : "cursor-not-allowed bg-stone-800 text-stone-500"
                         }`}
                       >
-                        Add To Cart
+                        <ShoppingBag
+                          size={14}
+                          className="shrink-0"
+                        />
+
+                        <span className="truncate">
+                          {inStock ? "Add To Cart" : "Out of Stock"}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          navigate(`/order/${item._id}`)
+                        }
+                        className="min-h-9 shrink-0 rounded-lg border border-emerald-800 px-2.5 py-2 text-xs font-semibold text-emerald-400 transition hover:bg-emerald-900/40 sm:px-3 sm:text-sm"
+                      >
+                        Order Now
                       </button>
                     </div>
                   </div>
-
-                  <button
-                    onClick={() =>
-                      navigate(`/order/${item._id}`)
-                    }
-                    className="w-full mt-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all duration-300"
-                  >
-                    Order Now
-                  </button>
-                </div>
-              </TiltCard>
-            );
-          })
+                </TiltCard>
+              );
+            })}
+          </div>
         ) : (
-          <div className="col-span-full text-center py-20">
-            <h2 className="text-2xl text-gray-400">
+          /* Empty search results */
+          <div className="rounded-2xl border border-stone-800 px-4 py-12 text-center sm:py-16">
+            <Search
+              size={32}
+              className="mx-auto mb-3 text-stone-600"
+            />
+
+            <h2 className="font-serif text-lg font-bold text-stone-300 sm:text-xl">
               No coffee found
             </h2>
 
-            <p className="text-gray-500 mt-2">
-              Try searching by name, price, or description.
+            <p className="mt-2 text-xs text-stone-500 sm:text-sm">
+              Try another name, category, price, or description.
             </p>
+
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => dispatch(setSearchTerm(""))}
+                className="mt-4 rounded-lg bg-emerald-800 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 sm:text-sm"
+              >
+                Clear Search
+              </button>
+            )}
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
