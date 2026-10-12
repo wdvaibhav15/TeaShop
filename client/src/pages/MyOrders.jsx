@@ -1,15 +1,13 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import { Eye, FileText, RotateCcw } from "lucide-react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyOrders = () => {
   const userState = useSelector((state) => state.user);
 
-  // Get the logged-in user from Redux
+  // Get logged-in user from Redux
   const user =
     userState?.user?.user ||
     userState?.user ||
@@ -22,6 +20,15 @@ const MyOrders = () => {
   const [userOrders, setUserOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  // Navigate to invoice page with the selected order
+  const handleInvoice = (order) => {
+    navigate("/invoice", {
+      state: { order },
+    });
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -37,8 +44,12 @@ const MyOrders = () => {
         setLoading(true);
         setError("");
 
+        const baseUrl =
+          import.meta.env.VITE_CLIENT_API_URL ||
+          "http://localhost:3000";
+
         const response = await axios.get(
-          `${import.meta.env.VITE_CLIENT_API_URL}/api/orders/user-orders`,
+          `${baseUrl}/api/orders/user-orders`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -68,7 +79,9 @@ const MyOrders = () => {
             "Unable to load your orders. Please try again."
         );
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -130,15 +143,20 @@ const MyOrders = () => {
         <h1 className="text-4xl sm:text-5xl font-serif font-bold mb-2">
           My Orders
         </h1>
-        
+
         <p className="text-gray-400 mb-4">
           Orders for{" "}
           <span className="text-emerald-400">
-            {user.email || user.name || user.username || "Your account"}
+            {user.email ||
+              user.name ||
+              user.username ||
+              "Your account"}
           </span>
         </p>
 
-        <h3 className="mb-1">Total orders: {userOrders.length}</h3>
+        <h3 className="mb-1">
+          Total orders: {userOrders.length}
+        </h3>
 
         {error && (
           <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-400">
@@ -175,7 +193,8 @@ const MyOrders = () => {
                 order.paymentStatus ||
                 "Processing";
 
-              const orderDate = order.createdAt || order.date;
+              const orderDate =
+                order.createdAt || order.date;
 
               return (
                 <div
@@ -194,7 +213,8 @@ const MyOrders = () => {
 
                       {order.deliveredOn && (
                         <p className="text-emerald-400 mt-2">
-                          Delivered on {formatDate(order.deliveredOn)}
+                          Delivered on{" "}
+                          {formatDate(order.deliveredOn)}
                         </p>
                       )}
                     </div>
@@ -210,7 +230,11 @@ const MyOrders = () => {
                     {items.length > 0 ? (
                       items.map((item, index) => (
                         <div
-                          key={item._id || item.coffeeId || index}
+                          key={
+                            item._id ||
+                            item.coffeeId ||
+                            index
+                          }
                           className="flex justify-between gap-4"
                         >
                           <p>
@@ -225,7 +249,9 @@ const MyOrders = () => {
                           <p className="shrink-0">
                             ₹
                             {Number(
-                              item.price ?? item.amount ?? 0
+                              item.price ??
+                                item.amount ??
+                                0
                             ).toFixed(2)}
                           </p>
                         </div>
@@ -233,10 +259,13 @@ const MyOrders = () => {
                     ) : (
                       <div className="flex justify-between gap-4">
                         <p>
-                          {coffeeName} × {order.quantity || 1}
+                          {coffeeName} ×{" "}
+                          {order.quantity || 1}
                         </p>
+
                         <p>
-                          ₹{getOrderTotal(order).toFixed(2)}
+                          ₹
+                          {getOrderTotal(order).toFixed(2)}
                         </p>
                       </div>
                     )}
@@ -258,12 +287,13 @@ const MyOrders = () => {
                         className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
                       >
                         <Eye size={18} />
-                        View
+                        Review
                       </button>
 
+                      {/* Corrected Invoice button */}
                       <button
                         type="button"
-                        onClick={() => window.print()}
+                        onClick={() => handleInvoice(order)}
                         className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
                       >
                         <FileText size={18} />
