@@ -4,9 +4,12 @@ import { Eye, FileText, RotateCcw } from "lucide-react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import InvoiceModal from "../components/InvoiceModal";
+import { useNavigate } from "react-router-dom";
+
 
 const MyOrders = () => {
   const userState = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const user =
     userState?.user?.user ||
@@ -277,17 +280,17 @@ const MyOrders = () => {
 
                     <div className="flex flex-wrap gap-3">
                       <button
-                        type="button"
-                        onClick={() =>
-                          window.alert(
-                            `Order ID: ${orderId}\nStatus: ${status}`
-                          )
-                        }
-                        className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
-                      >
-                        <Eye size={18} />
-                        View
-                      </button>
+  type="button"
+  onClick={() =>
+    navigate("/review", {
+      state: { order },
+    })
+  }
+  className="flex items-center gap-2 px-4 py-2 border border-emerald-500/40 text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-colors"
+>
+  <Eye size={18} />
+  Write Review
+</button>
 
                       {/* Open invoice for this order only */}
                       <button
@@ -301,9 +304,7 @@ const MyOrders = () => {
 
                       <button
                         type="button"
-                        onClick={() => {
-                          window.location.href = "/shop";
-                        }}
+                        onClick={() => navigate("/menu")}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 rounded-lg hover:bg-emerald-700"
                       >
                         <RotateCcw size={18} />

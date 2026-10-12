@@ -34,6 +34,7 @@ import ResetPassSuccess from "./components/ResetPassSuccess";
 import Announcement from "./components/Announcement.jsx";
 import MenuCard from "./components/MenuCard.jsx";
 import MyOrders from "./pages/MyOrders.jsx";
+import Review from "./components/Review.jsx";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -80,8 +81,8 @@ const AppContent = () => {
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-failure" element={<PaymentFailurePage />} />
 
-          {/* <Route path="/invoice" element={<Invoice />} /> */}
-
+          
+          <Route path="/review" element={<Review />} />
           
 
           <Route path="*" element={<NotFoundPage />} />

@@ -277,7 +277,7 @@ const handlePrint = () => {
               type="button"
               onClick={onClose}
               aria-label="Close invoice"
-              className="p-2 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
+              className="p-2 rounded-lg bg-red-600 hover:bg-red-400 cursor-pointer"
             >
               <X size={20} />
             </button>
