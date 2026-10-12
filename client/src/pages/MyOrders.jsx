@@ -1,13 +1,13 @@
+
 import React, { useEffect, useState } from "react";
 import { Eye, FileText, RotateCcw } from "lucide-react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import InvoiceModal from "../components/InvoiceModal";
 
 const MyOrders = () => {
   const userState = useSelector((state) => state.user);
 
-  // Get logged-in user from Redux
   const user =
     userState?.user?.user ||
     userState?.user ||
@@ -20,15 +20,7 @@ const MyOrders = () => {
   const [userOrders, setUserOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-
-  // Navigate to invoice page with the selected order
-  const handleInvoice = (order) => {
-    navigate("/invoice", {
-      state: { order },
-    });
-  };
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -60,7 +52,7 @@ const MyOrders = () => {
 
         if (!isMounted) return;
 
-        if (response.data.success) {
+        if (response.data?.success) {
           setUserOrders(response.data.orders || []);
         } else {
           setUserOrders([]);
@@ -79,9 +71,7 @@ const MyOrders = () => {
             "Unable to load your orders. Please try again."
         );
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     };
 
@@ -114,6 +104,44 @@ const MyOrders = () => {
         0
     );
 
+  const getOrderId = (order, index) =>
+    order._id ||
+    order.id ||
+    order.razorpayOrderId ||
+    `order-${index}`;
+
+  const getOrderStatus = (order) =>
+    order.paymentStatus ||
+    order.status ||
+    order.orderStatus ||
+    "Processing";
+
+  const getOrderItems = (order) =>
+    Array.isArray(order.items)
+      ? order.items
+      : Array.isArray(order._items)
+        ? order._items
+        : [];
+
+  const getCoffeeName = (order) =>
+    order.coffeeId?.coffeeTitle ||
+    order.coffeeId?.title ||
+    order.title ||
+    order.coffeeTitle ||
+    order.name ||
+    "Coffee Item";
+
+  const getItemName = (item) =>
+    item.name ||
+    item.title ||
+    item.coffeeTitle ||
+    item.coffeeId?.coffeeTitle ||
+    item.coffeeId?.title ||
+    "Coffee Item";
+
+  const getItemPrice = (item) =>
+    Number(item.price ?? item.amount ?? 0);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -130,6 +158,7 @@ const MyOrders = () => {
         <h1 className="text-3xl font-bold mb-4">
           Please log in
         </h1>
+
         <p className="text-gray-400">
           Log in to view your personal order history.
         </p>
@@ -138,7 +167,7 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-6">
+    <div className="min-h-screen bg-black text-white px-4 sm:px-6 py-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl sm:text-5xl font-serif font-bold mb-2">
           My Orders
@@ -147,14 +176,11 @@ const MyOrders = () => {
         <p className="text-gray-400 mb-4">
           Orders for{" "}
           <span className="text-emerald-400">
-            {user.email ||
-              user.name ||
-              user.username ||
-              "Your account"}
+            {user.email || user.name || user.username || "Your account"}
           </span>
         </p>
 
-        <h3 className="mb-1">
+        <h3 className="mb-4">
           Total orders: {userOrders.length}
         </h3>
 
@@ -166,41 +192,17 @@ const MyOrders = () => {
 
         {!error && userOrders.length > 0 ? (
           <div className="space-y-6">
-            {userOrders.map((order, idx) => {
-              const orderId =
-                order._id ||
-                order.id ||
-                order.razorpayOrderId ||
-                `order-${idx}`;
-
-              const items = Array.isArray(order.items)
-                ? order.items
-                : Array.isArray(order._items)
-                ? order._items
-                : [];
-
-              const coffeeName =
-                order.coffeeId?.coffeeTitle ||
-                order.coffeeId?.title ||
-                order.title ||
-                order.coffeeTitle ||
-                order.name ||
-                "Coffee Item";
-
-              const status =
-                order.status ||
-                order.orderStatus ||
-                order.paymentStatus ||
-                "Processing";
-
-              const orderDate =
-                order.createdAt || order.date;
+            {userOrders.map((order, index) => {
+              const orderId = getOrderId(order, index);
+              const items = getOrderItems(order);
+              const status = getOrderStatus(order);
 
               return (
                 <div
                   key={orderId}
-                  className="border border-gray-700 rounded-2xl p-6 bg-[#080808]"
+                  className="border border-gray-700 rounded-2xl p-5 sm:p-6 bg-[#080808]"
                 >
+                  {/* Order header */}
                   <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
                     <div>
                       <h2 className="text-xl font-semibold break-all">
@@ -208,7 +210,8 @@ const MyOrders = () => {
                       </h2>
 
                       <p className="text-gray-400 mt-2">
-                        Ordered: {formatDate(orderDate)}
+                        Ordered:{" "}
+                        {formatDate(order.createdAt || order.date)}
                       </p>
 
                       {order.deliveredOn && (
@@ -226,32 +229,28 @@ const MyOrders = () => {
 
                   <div className="border-t border-gray-700 my-5" />
 
+                  {/* Order items */}
                   <div className="space-y-3">
                     {items.length > 0 ? (
-                      items.map((item, index) => (
+                      items.map((item, itemIndex) => (
                         <div
                           key={
                             item._id ||
-                            item.coffeeId ||
-                            index
+                            item.coffeeId?._id ||
+                            itemIndex
                           }
                           className="flex justify-between gap-4"
                         >
                           <p>
-                            {item.name ||
-                              item.title ||
-                              item.coffeeTitle ||
-                              item.coffeeId?.coffeeTitle ||
-                              "Coffee Item"}{" "}
-                            × {item.quantity || 1}
+                            {getItemName(item)} ×{" "}
+                            {item.quantity || 1}
                           </p>
 
                           <p className="shrink-0">
                             ₹
-                            {Number(
-                              item.price ??
-                                item.amount ??
-                                0
+                            {(
+                              getItemPrice(item) *
+                              Number(item.quantity || 1)
                             ).toFixed(2)}
                           </p>
                         </div>
@@ -259,18 +258,18 @@ const MyOrders = () => {
                     ) : (
                       <div className="flex justify-between gap-4">
                         <p>
-                          {coffeeName} ×{" "}
+                          {getCoffeeName(order)} ×{" "}
                           {order.quantity || 1}
                         </p>
 
-                        <p>
-                          ₹
-                          {getOrderTotal(order).toFixed(2)}
+                        <p className="shrink-0">
+                          ₹{getOrderTotal(order).toFixed(2)}
                         </p>
                       </div>
                     )}
                   </div>
 
+                  {/* Order total and actions */}
                   <div className="border-t border-gray-700 mt-5 pt-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                     <h3 className="text-2xl font-bold">
                       ₹{getOrderTotal(order).toFixed(2)}
@@ -287,13 +286,13 @@ const MyOrders = () => {
                         className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
                       >
                         <Eye size={18} />
-                        Review
+                        View
                       </button>
 
-                      {/* Corrected Invoice button */}
+                      {/* Open invoice for this order only */}
                       <button
                         type="button"
-                        onClick={() => handleInvoice(order)}
+                        onClick={() => setSelectedInvoice(order)}
                         className="flex items-center gap-2 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
                       >
                         <FileText size={18} />
@@ -303,7 +302,7 @@ const MyOrders = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          window.location.href = "/menu";
+                          window.location.href = "/shop";
                         }}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 rounded-lg hover:bg-emerald-700"
                       >
@@ -316,16 +315,27 @@ const MyOrders = () => {
               );
             })}
           </div>
-        ) : !error ? (
-          <div className="text-center py-20">
-            <h2 className="text-3xl font-semibold mb-3">
-              No Orders Found
-            </h2>
-            <p className="text-gray-400">
-              You haven't placed any orders yet.
-            </p>
-          </div>
-        ) : null}
+        ) : (
+          !error && (
+            <div className="text-center py-20">
+              <h2 className="text-3xl font-semibold mb-3">
+                No Orders Found
+              </h2>
+
+              <p className="text-gray-400">
+                You haven't placed any orders yet.
+              </p>
+            </div>
+          )
+        )}
+
+        {/* Render one modal using the selected order */}
+        {selectedInvoice && (
+          <InvoiceModal
+            order={selectedInvoice}
+            onClose={() => setSelectedInvoice(null)}
+          />
+        )}
       </div>
     </div>
   );
