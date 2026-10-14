@@ -1,6 +1,248 @@
 
 
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
+// import { X, Upload, Trash2 } from 'lucide-react';
+// import axios from 'axios';
+// import toast from 'react-hot-toast';
+
+// const AddCoffee = ({ onClose }) => {
+//   const [coffeeTitle, setCoffeeTitle] = useState('');
+//   const [price, setPrice] = useState('');
+//   const [stockCount, setStockCount] = useState('');
+//   const [description, setDescription] = useState('');
+  
+//   // Device Image States
+//   const [imageFile, setImageFile] = useState(null);
+//   const [imagePreview, setImagePreview] = useState('');
+//   const [loading, setLoading] = useState(false);
+
+//   // Handle File Selection from Device
+//   const handleFileChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setImageFile(file);
+//       const previewUrl = URL.createObjectURL(file);
+//       setImagePreview(previewUrl);
+//     }
+//   };
+
+//   // Clear Selected File
+//   const handleRemoveImage = () => {
+//     setImageFile(null);
+//     setImagePreview('');
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     try {
+//       const formData = new FormData();
+//       formData.append('coffeeTitle', coffeeTitle);
+//       formData.append('price', Number(price));
+//       formData.append('stockCount', stockCount ? Number(stockCount) : 0);
+//       formData.append('description', description);
+
+//       if (imageFile) {
+//         // 'imageFile' field name must match upload.single('imageFile') in route
+//         formData.append('imageFile', imageFile);
+//       }
+
+//       const response = await axios.post(
+//         `${import.meta.env.VITE_CLIENT_API_URL}/api/coffee/add-coffee`,
+//         formData,
+//         {
+//           headers: {
+//             'Content-Type': 'multipart/form-data',
+//           },
+//         }
+//       );
+
+//       console.log('Response:', response);
+
+//       if (response.status === 200 || response.status === 201 || response.data?.success) {
+//         if (typeof onClose === 'function') {
+//           onClose();
+//         }
+//       }
+//       toast.success('Coffee added successfully');
+//     } catch (error) {
+//       toast.error(error.response?.data?.message || 'Failed to add coffee');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+//       <div className="w-full max-w-2xl bg-[#F6F4EF] rounded-xl shadow-2xl overflow-hidden text-[#2C3531] border border-[#E2DDD5]">
+        
+//         {/* Header */}
+//         <div className="bg-[#172D23] text-white px-6 py-5 flex items-center justify-between">
+//           <div>
+//             <p className="text-[11px] font-mono tracking-widest text-[#A2C4B7] uppercase font-bold">
+//               Menu Management
+//             </p>
+//             <h2 className="text-2xl font-serif font-bold tracking-tight text-[#F7F5F0]">
+//               Add New Coffee to Menu
+//             </h2>
+//           </div>
+//           <button
+//             type="button"
+//             onClick={onClose}
+//             aria-label="Close modal"
+//             className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
+//           >
+//             <X className="w-5 h-5" />
+//           </button>
+//         </div>
+
+//         {/* Form */}
+//         <form onSubmit={handleSubmit} className="p-6 space-y-5">
+//           {/* Coffee Title */}
+//           <div>
+//             <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
+//               Coffee / Beverage Title *
+//             </label>
+//             <input
+//               type="text"
+//               name="title"
+//               value={coffeeTitle}
+//               onChange={(e) => setCoffeeTitle(e.target.value)}
+//               placeholder="e.g. Ethiopian Guji Highlands Reserve"
+//               required
+//               className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
+//             />
+//           </div>
+
+//           {/* Price & Initial Stock */}
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//             <div>
+//               <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
+//                 Price (Rs/-) *
+//               </label>
+//               <input
+//                 type="number"
+//                 step="0.01"
+//                 name="price"
+//                 value={price}
+//                 onChange={(e) => setPrice(e.target.value)}
+//                 placeholder="149,199,..."
+//                 required
+//                 className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
+//               />
+//             </div>
+
+//             <div>
+//               <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
+//                 Initial Stock Count
+//               </label>
+//               <input
+//                 type="number"
+//                 name="stockCount"
+//                 value={stockCount}
+//                 onChange={(e) => setStockCount(e.target.value)}
+//                 placeholder="40"
+//                 className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
+//               />
+//             </div>
+//           </div>
+
+//           {/* Description */}
+//           <div>
+//             <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
+//               Description & Barista Brewing Notes
+//             </label>
+//             <textarea
+//               name="description"
+//               rows={3}
+//               value={description}
+//               onChange={(e) => setDescription(e.target.value)}
+//               placeholder="Detailed flavor profile, extraction notes, or serving recommendations..."
+//               className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all resize-y"
+//             />
+//           </div>
+
+//           {/* Device Image Upload Only */}
+//           <div>
+//             <label className="block text-sm font-semibold text-[#2C3531] mb-2">
+//               Coffee Image
+//             </label>
+
+//             <div className="flex items-center justify-center w-full">
+//               <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#DDD8CE] rounded-lg cursor-pointer bg-white hover:bg-[#FAF9F5] transition-colors">
+//                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
+//                   <Upload className="w-7 h-7 mb-2 text-[#A5A095]" />
+//                   <p className="text-xs font-semibold text-[#2C3531]">
+//                     Click to upload <span className="font-normal text-[#A5A095]">or drag file here</span>
+//                   </p>
+//                   <p className="text-[10px] text-[#A5A095] mt-0.5">PNG, JPG, WEBP up to 5MB</p>
+//                 </div>
+//                 <input
+//                   type="file"
+//                   accept="image/*"
+//                   className="hidden"
+//                   onChange={handleFileChange}
+//                 />
+//               </label>
+//             </div>
+
+//             {/* Selected Image Preview */}
+//             {imagePreview && (
+//               <div className="mt-3 flex items-center gap-3 p-2 bg-white border border-[#E2DDD5] rounded-lg">
+//                 <img
+//                   src={imagePreview}
+//                   alt="Coffee Preview"
+//                   className="w-14 h-14 object-cover rounded-md border border-[#E2DDD5]"
+//                 />
+//                 <div className="flex-1 overflow-hidden">
+//                   <p className="text-xs font-semibold text-[#2C3531] truncate">
+//                     {imageFile?.name}
+//                   </p>
+//                   <p className="text-[10px] text-[#A5A095]">
+//                     {imageFile ? `${(imageFile.size / 1024).toFixed(1)} KB` : ''}
+//                   </p>
+//                 </div>
+//                 <button
+//                   type="button"
+//                   onClick={handleRemoveImage}
+//                   className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+//                   title="Remove image"
+//                 >
+//                   <Trash2 className="w-4 h-4" />
+//                 </button>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* Footer Action Buttons */}
+//           <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#E5E0D6]">
+//             <button
+//               type="button"
+//               onClick={onClose}
+//               disabled={loading}
+//               className="px-5 py-2.5 bg-white border border-[#D5D0C5] rounded-lg text-sm font-semibold text-[#4A5568] hover:bg-[#EAE6DE] transition-colors cursor-pointer disabled:opacity-50"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               type="submit"
+//               disabled={loading}
+//               className="px-6 py-2.5 bg-[#122B22] text-[#F7F5F0] rounded-lg text-sm font-semibold hover:bg-[#1C3E32] transition-colors shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-50"
+//             >
+//               {loading ? 'Publishing...' : 'Publish to Menu'}
+//             </button>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddCoffee;
+
+
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Trash2 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -10,23 +252,40 @@ const AddCoffee = ({ onClose }) => {
   const [price, setPrice] = useState('');
   const [stockCount, setStockCount] = useState('');
   const [description, setDescription] = useState('');
-  
-  // Device Image States
+
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Handle File Selection from Device
+  // Clean up temporary image preview URLs.
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      e.target.value = '';
+      return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be 5 MB or less');
+      e.target.value = '';
+      return;
+    }
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
-  // Clear Selected File
   const handleRemoveImage = () => {
     setImageFile(null);
     setImagePreview('');
@@ -34,201 +293,374 @@ const AddCoffee = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
     setLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append('coffeeTitle', coffeeTitle);
+
+      formData.append('coffeeTitle', coffeeTitle.trim());
       formData.append('price', Number(price));
-      formData.append('stockCount', stockCount ? Number(stockCount) : 0);
-      formData.append('description', description);
+      formData.append(
+        'stockCount',
+        stockCount === '' ? 0 : Number(stockCount)
+      );
+      formData.append('description', description.trim());
 
       if (imageFile) {
-        // 'imageFile' field name must match upload.single('imageFile') in route
         formData.append('imageFile', imageFile);
       }
 
+      const baseUrl =
+        import.meta.env.VITE_CLIENT_API_URL || 'http://localhost:3000';
+
       const response = await axios.post(
-        `${import.meta.env.VITE_CLIENT_API_URL}/api/coffee/add-coffee`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        `${baseUrl}/api/coffee/add-coffee`,
+        formData
       );
 
-      console.log('Response:', response);
-
-      if (response.status === 200 || response.status === 201 || response.data?.success) {
-        if (typeof onClose === 'function') {
-          onClose();
-        }
+      if (
+        (response.status === 200 || response.status === 201) &&
+        response.data?.success !== false
+      ) {
+        toast.success('Coffee added successfully');
+        onClose?.();
+      } else {
+        toast.error(
+          response.data?.message || 'Failed to add coffee'
+        );
       }
-      toast.success('Coffee added successfully');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add coffee');
+      toast.error(
+        error.response?.data?.message || 'Failed to add coffee'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-[#F6F4EF] rounded-xl shadow-2xl overflow-hidden text-[#2C3531] border border-[#E2DDD5]">
-        
+    <div
+      className="
+        fixed inset-0 z-[100]
+        flex items-start sm:items-center justify-center
+        overflow-y-auto overscroll-contain
+        bg-black/60 backdrop-blur-sm
+        p-2 sm:p-4
+      "
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget && !loading) {
+          onClose?.();
+        }
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-coffee-title"
+        className="
+          relative my-auto w-full
+          max-w-2xl min-w-0
+          max-h-[calc(100dvh-1rem)] sm:max-h-[90dvh]
+          flex flex-col
+          overflow-hidden rounded-xl sm:rounded-2xl
+          border border-[#E2DDD5]
+          bg-[#F6F4EF] text-[#2C3531]
+          shadow-2xl
+        "
+      >
         {/* Header */}
-        <div className="bg-[#172D23] text-white px-6 py-5 flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-mono tracking-widest text-[#A2C4B7] uppercase font-bold">
+        <div className="
+          flex shrink-0 items-center justify-between gap-3
+          bg-[#172D23]
+          px-4 py-4 sm:px-6 sm:py-5
+          text-white
+        ">
+          <div className="min-w-0">
+            <p className="
+              text-[10px] sm:text-[11px]
+              font-mono font-bold uppercase tracking-widest
+              text-[#A2C4B7]
+            ">
               Menu Management
             </p>
-            <h2 className="text-2xl font-serif font-bold tracking-tight text-[#F7F5F0]">
+
+            <h2
+              id="add-coffee-title"
+              className="
+                mt-1 text-lg sm:text-2xl
+                font-serif font-bold leading-tight
+                tracking-tight text-[#F7F5F0]
+              "
+            >
               Add New Coffee to Menu
             </h2>
           </div>
+
           <button
             type="button"
             onClick={onClose}
+            disabled={loading}
             aria-label="Close modal"
-            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
+            className="
+              flex h-9 w-9 shrink-0 items-center justify-center
+              rounded-full bg-white/10
+              text-white/80 transition-colors
+              hover:bg-white/20 hover:text-white
+              disabled:cursor-not-allowed disabled:opacity-50
+            "
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Coffee Title */}
-          <div>
-            <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
-              Coffee / Beverage Title *
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={coffeeTitle}
-              onChange={(e) => setCoffeeTitle(e.target.value)}
-              placeholder="e.g. Ethiopian Guji Highlands Reserve"
-              required
-              className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
-            />
-          </div>
-
-          {/* Price & Initial Stock */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Scrollable Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="
+            min-h-0 flex-1 overflow-y-auto
+            p-4 sm:p-6
+          "
+        >
+          <div className="space-y-4 sm:space-y-5">
+            {/* Coffee Title */}
             <div>
-              <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
-                Price (Rs/-) *
+              <label
+                htmlFor="coffeeTitle"
+                className="mb-1.5 block text-sm font-semibold"
+              >
+                Coffee / Beverage Title *
               </label>
+
               <input
-                type="number"
-                step="0.01"
-                name="price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="149,199,..."
+                id="coffeeTitle"
+                type="text"
+                name="coffeeTitle"
+                value={coffeeTitle}
+                onChange={(e) => setCoffeeTitle(e.target.value)}
+                placeholder="e.g. Ethiopian Guji Highlands Reserve"
+                autoComplete="off"
                 required
-                className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
+                className="
+                  w-full min-w-0 rounded-lg
+                  border border-[#DDD8CE] bg-white
+                  px-3 py-2.5 sm:px-3.5
+                  text-sm text-[#2C3531]
+                  placeholder:text-[#A5A095]
+                  outline-none transition
+                  focus:border-[#122B22]
+                  focus:ring-2 focus:ring-[#122B22]/20
+                "
               />
             </div>
 
+            {/* Price & Stock */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="min-w-0">
+                <label
+                  htmlFor="price"
+                  className="mb-1.5 block text-sm font-semibold"
+                >
+                  Price (₹) *
+                </label>
+
+                <input
+                  id="price"
+                  type="number"
+                  name="price"
+                  min="0.01"
+                  step="0.01"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="149.00"
+                  required
+                  className="
+                    w-full min-w-0 rounded-lg
+                    border border-[#DDD8CE] bg-white
+                    px-3 py-2.5 sm:px-3.5
+                    text-sm outline-none transition
+                    focus:border-[#122B22]
+                    focus:ring-2 focus:ring-[#122B22]/20
+                  "
+                />
+              </div>
+
+              <div className="min-w-0">
+                <label
+                  htmlFor="stockCount"
+                  className="mb-1.5 block text-sm font-semibold"
+                >
+                  Initial Stock Count
+                </label>
+
+                <input
+                  id="stockCount"
+                  type="number"
+                  name="stockCount"
+                  min="0"
+                  step="1"
+                  value={stockCount}
+                  onChange={(e) => setStockCount(e.target.value)}
+                  placeholder="40"
+                  className="
+                    w-full min-w-0 rounded-lg
+                    border border-[#DDD8CE] bg-white
+                    px-3 py-2.5 sm:px-3.5
+                    text-sm outline-none transition
+                    focus:border-[#122B22]
+                    focus:ring-2 focus:ring-[#122B22]/20
+                  "
+                />
+              </div>
+            </div>
+
+            {/* Description */}
             <div>
-              <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
-                Initial Stock Count
+              <label
+                htmlFor="description"
+                className="mb-1.5 block text-sm font-semibold"
+              >
+                Description & Barista Brewing Notes
               </label>
-              <input
-                type="number"
-                name="stockCount"
-                value={stockCount}
-                onChange={(e) => setStockCount(e.target.value)}
-                placeholder="40"
-                className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all"
+
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Flavor profile, brewing notes, or serving recommendations..."
+                className="
+                  w-full min-w-0 resize-y rounded-lg
+                  border border-[#DDD8CE] bg-white
+                  px-3 py-2.5 sm:px-3.5
+                  text-sm leading-relaxed
+                  placeholder:text-[#A5A095]
+                  outline-none transition
+                  focus:border-[#122B22]
+                  focus:ring-2 focus:ring-[#122B22]/20
+                "
               />
             </div>
-          </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-semibold text-[#2C3531] mb-1.5">
-              Description & Barista Brewing Notes
-            </label>
-            <textarea
-              name="description"
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detailed flavor profile, extraction notes, or serving recommendations..."
-              className="w-full px-3.5 py-2.5 bg-white border border-[#DDD8CE] rounded-lg text-sm text-[#2C3531] placeholder-[#A5A095] focus:outline-none focus:ring-2 focus:ring-[#122B22]/20 focus:border-[#122B22] transition-all resize-y"
-            />
-          </div>
+            {/* Image Upload */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold">
+                Coffee Image
+              </label>
 
-          {/* Device Image Upload Only */}
-          <div>
-            <label className="block text-sm font-semibold text-[#2C3531] mb-2">
-              Coffee Image
-            </label>
+              <label className="
+                flex min-h-28 sm:min-h-32 w-full
+                cursor-pointer flex-col items-center justify-center
+                rounded-lg border-2 border-dashed
+                border-[#DDD8CE] bg-white
+                px-3 py-5 text-center
+                transition-colors hover:bg-[#FAF9F5]
+              ">
+                <Upload className="mb-2 h-6 w-6 sm:h-7 sm:w-7 text-[#A5A095]" />
 
-            <div className="flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#DDD8CE] rounded-lg cursor-pointer bg-white hover:bg-[#FAF9F5] transition-colors">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-7 h-7 mb-2 text-[#A5A095]" />
-                  <p className="text-xs font-semibold text-[#2C3531]">
-                    Click to upload <span className="font-normal text-[#A5A095]">or drag file here</span>
-                  </p>
-                  <p className="text-[10px] text-[#A5A095] mt-0.5">PNG, JPG, WEBP up to 5MB</p>
-                </div>
+                <p className="text-xs font-semibold">
+                  Click to upload
+                  <span className="font-normal text-[#A5A095]">
+                    {' '}or choose a file
+                  </span>
+                </p>
+
+                <p className="mt-1 text-[10px] text-[#A5A095]">
+                  PNG, JPG, WEBP · Maximum 5 MB
+                </p>
+
                 <input
                   type="file"
-                  accept="image/*"
-                  className="hidden"
+                  name="imageFile"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="sr-only"
                   onChange={handleFileChange}
                 />
               </label>
-            </div>
 
-            {/* Selected Image Preview */}
-            {imagePreview && (
-              <div className="mt-3 flex items-center gap-3 p-2 bg-white border border-[#E2DDD5] rounded-lg">
-                <img
-                  src={imagePreview}
-                  alt="Coffee Preview"
-                  className="w-14 h-14 object-cover rounded-md border border-[#E2DDD5]"
-                />
-                <div className="flex-1 overflow-hidden">
-                  <p className="text-xs font-semibold text-[#2C3531] truncate">
-                    {imageFile?.name}
-                  </p>
-                  <p className="text-[10px] text-[#A5A095]">
-                    {imageFile ? `${(imageFile.size / 1024).toFixed(1)} KB` : ''}
-                  </p>
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="
+                  mt-3 flex min-w-0 items-center gap-3
+                  rounded-lg border border-[#E2DDD5]
+                  bg-white p-2 sm:p-3
+                ">
+                  <img
+                    src={imagePreview}
+                    alt="Coffee preview"
+                    className="
+                      h-12 w-12 sm:h-16 sm:w-16
+                      shrink-0 rounded-md
+                      border border-[#E2DDD5] object-cover
+                    "
+                  />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold">
+                      {imageFile?.name}
+                    </p>
+
+                    <p className="mt-1 text-[10px] text-[#A5A095]">
+                      {imageFile
+                        ? `${(imageFile.size / 1024).toFixed(1)} KB`
+                        : ''}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    aria-label="Remove selected image"
+                    className="
+                      shrink-0 rounded-lg p-2
+                      text-red-500 transition-colors
+                      hover:bg-red-50
+                    "
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                  title="Remove image"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Footer Action Buttons */}
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#E5E0D6]">
+          {/* Footer Actions */}
+          <div className="
+            mt-5 flex flex-col-reverse gap-2
+            border-t border-[#E5E0D6] pt-4
+            sm:flex-row sm:justify-end sm:gap-3
+          ">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 bg-white border border-[#D5D0C5] rounded-lg text-sm font-semibold text-[#4A5568] hover:bg-[#EAE6DE] transition-colors cursor-pointer disabled:opacity-50"
+              className="
+                w-full rounded-lg border border-[#D5D0C5]
+                bg-white px-5 py-2.5
+                text-sm font-semibold text-[#4A5568]
+                transition-colors hover:bg-[#EAE6DE]
+                disabled:opacity-50
+                sm:w-auto
+              "
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-[#122B22] text-[#F7F5F0] rounded-lg text-sm font-semibold hover:bg-[#1C3E32] transition-colors shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-50"
+              className="
+                w-full rounded-lg bg-[#122B22]
+                px-6 py-2.5 text-sm font-semibold
+                text-[#F7F5F0] shadow-md
+                transition-colors hover:bg-[#1C3E32]
+                active:scale-[0.99]
+                disabled:cursor-not-allowed disabled:opacity-50
+                sm:w-auto
+              "
             >
               {loading ? 'Publishing...' : 'Publish to Menu'}
             </button>
