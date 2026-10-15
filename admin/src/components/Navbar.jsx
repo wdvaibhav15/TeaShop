@@ -219,116 +219,179 @@ const handleLogout = () => {
   </span>
 </button>
 
-          {/* Notifications */}
-          {isLoggedIn && (
-            <div className="relative">
-            <button
-              type="button"
-              onClick={() =>
-                setIsNotificationOpen((prev) => !prev)
-              }
-              className="cursor-pointer relative p-2.5 rounded-xl bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800"
-            >
-              <Bell className="w-5 h-5" />
+          
+{/* Notifications */}
+{isLoggedIn && (
+  <div className="relative">
+    {/* Bell Button */}
+    <button
+      type="button"
+      aria-label="Toggle notifications"
+      aria-expanded={isNotificationOpen}
+      onClick={() => setIsNotificationOpen((prev) => !prev)}
+      className="relative flex h-11 w-11 shrink-0 items-center justify-center
+        rounded-xl border border-stone-200 bg-white
+        dark:border-stone-800 dark:bg-stone-950"
+    >
+      <Bell className="h-5 w-5" />
 
-              {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">
-                  {notifications.length}
-                </span>
-              )}
-            </button>
+      {notifications.length > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5
+          items-center justify-center rounded-full bg-amber-500
+          px-1 text-[10px] font-bold text-white">
+          {notifications.length > 99 ? "99+" : notifications.length}
+        </span>
+      )}
+    </button>
 
-            {isNotificationOpen && (
-              <div className="absolute right-0 mt-3 w-[min(380px,90vw)] rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-2xl overflow-hidden z-50">
-                <div className="p-4 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
-                  <h3 className="font-semibold text-lg">
-                    Notifications
-                  </h3>
+    {/* Responsive Panel */}
+    {isNotificationOpen && (
+      <>
+        {/* Backdrop */}
+        <button
+          type="button"
+          aria-label="Close notifications"
+          onClick={() => setIsNotificationOpen(false)}
+          className="fixed inset-0 z-[90] bg-black/40"
+        />
 
-                  <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                    {notifications.length} New
-                  </span>
-                </div>
+        <div
+          className="
+            fixed left-3 right-3 top-[76px] z-[100]
+            mx-auto flex w-auto max-w-[500px]
+            max-h-[calc(100dvh-92px)] flex-col
+            overflow-hidden rounded-2xl
+            border border-stone-200 bg-white shadow-2xl
+            dark:border-stone-800 dark:bg-stone-900
 
-                <div className="max-h-[450px] overflow-y-auto">
-                  {loadingNotifications  ? (
-                    <div className="p-8 text-center">
-                      Loading...
+            sm:left-auto sm:right-5 sm:top-[90px]
+            sm:mx-0 sm:w-[380px]
+            sm:max-w-[calc(100vw-40px)]
+
+            lg:right-8 lg:w-[420px]
+          "
+        >
+          {/* Header */}
+          <div className="flex shrink-0 items-center justify-between gap-3
+            border-b border-stone-200 p-4
+            dark:border-stone-800">
+            <h3 className="text-base font-semibold sm:text-lg">
+              Notifications
+            </h3>
+
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="whitespace-nowrap rounded-full
+                bg-emerald-100 px-2.5 py-1 text-xs text-emerald-700">
+                {notifications.length} New
+              </span>
+
+              <button
+                type="button"
+                aria-label="Close notifications"
+                onClick={() => setIsNotificationOpen(false)}
+                className="rounded-lg p-1.5 text-stone-500
+                  hover:bg-stone-100 dark:hover:bg-stone-800"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* Notification List */}
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            {loadingNotifications ? (
+              <div className="p-8 text-center text-sm text-stone-500">
+                Loading notifications...
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="px-4 py-10 text-center sm:py-12">
+                <div className="mb-3 text-5xl">🔔</div>
+
+                <h3 className="font-semibold">
+                  No Notifications
+                </h3>
+
+                <p className="mx-auto mt-2 max-w-xs text-xs leading-5
+                  text-stone-500">
+                  Orders, subscribers and feedback will appear here.
+                </p>
+              </div>
+            ) : (
+              notifications.map((item) => (
+                <div
+                  key={item._id}
+                  className="border-b border-stone-100 p-3
+                    transition-colors hover:bg-stone-50
+                    dark:border-stone-800 dark:hover:bg-stone-800
+                    sm:p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center
+                        justify-center rounded-xl text-lg text-white ${
+                          item.type === "order"
+                            ? "bg-emerald-600"
+                            : item.type === "subscriber"
+                            ? "bg-blue-600"
+                            : "bg-amber-600"
+                        }`}
+                    >
+                      {item.type === "order"
+                        ? "🛒"
+                        : item.type === "subscriber"
+                        ? "📩"
+                        : "💬"}
                     </div>
-                  ) : notifications.length === 0 ? (
-                    <div className="p-10 text-center">
-                      <div className="text-5xl mb-2">🔔</div>
-                      <h3 className="font-semibold">
-                        No Notifications
-                      </h3>
-                      <p className="text-xs text-stone-500 mt-2">
-                        Orders, subscribers and feedback will
-                        appear here.
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-start
+                        justify-between gap-x-2 gap-y-1">
+                        <h4 className="break-words text-sm font-semibold">
+                          {item.title}
+                        </h4>
+
+                        <span className="shrink-0 text-[10px]
+                          text-stone-500">
+                          {item._createdAt_
+                            ? new Date(item._createdAt_)
+                                .toLocaleTimeString([], {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                            : ""}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 break-words text-xs leading-5
+                        text-stone-500">
+                        {item.message}
                       </p>
                     </div>
-                  ) : (
-                    notifications.map((item) => (
-                      <div
-                        key={item._id}
-                        className="p-4 border-b border-stone-100 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800 transition-all"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${
-                              item.type === "order"
-                                ? "bg-emerald-600"
-                                : item.type === "subscriber"
-                                  ? "bg-blue-600"
-                                  : "bg-amber-600"
-                            }`}
-                          >
-                            {item.type === "order"
-                              ? "🛒"
-                              : item.type === "subscriber"
-                                ? "📩"
-                                : "💬"}
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between gap-2 items-center">
-                              <h4 className="font-semibold text-sm">
-                                {item.title}
-                              </h4>
-
-                              <span className="text-[10px] text-stone-500">
-                                {item.createdAt
-                                  ? new Date(
-                                      item.createdAt
-                                    ).toLocaleTimeString()
-                                  : ""}
-                              </span>
-                            </div>
-
-                            <p className="text-xs text-stone-500 mt-1">
-                              {item.message}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                  </div>
                 </div>
-
-                <div className="p-3 border-t border-stone-200 dark:border-stone-800 text-center">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setIsNotificationOpen(false)
-                    }
-                    className="text-sm font-medium text-emerald-600 hover:text-emerald-500"
-                  >
-                    Close Notifications
-                  </button>
-                </div>
-              </div>
+              ))
             )}
           </div>
-          )}
+
+          {/* Footer */}
+          <div className="shrink-0 border-t border-stone-200 p-3
+            text-center dark:border-stone-800">
+            <button
+              type="button"
+              onClick={() => setIsNotificationOpen(false)}
+              className="w-full rounded-lg py-2 text-sm font-medium
+                text-emerald-600 transition hover:bg-emerald-50
+                dark:hover:bg-emerald-950/40"
+            >
+              Close Notifications
+            </button>
+          </div>
+        </div>
+      </>
+    )}
+  </div>
+)}
+
 
           {/* Profile and authentication */}
           <div ref={dropdownRef} className="relative">
