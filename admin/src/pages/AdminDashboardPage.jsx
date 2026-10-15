@@ -90,6 +90,7 @@ import FeedbackTable from "../components/FeedBackTable";
 import AllOrders from "../components/AllOrders";
 import Subscribers from "../components/Subscribers";
 import Dashboard from "../components/Dashboard";
+import CafeSetting from "./CafeSetting";
 
 const AdminDashboardPage = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -189,9 +190,7 @@ const AdminDashboardPage = () => {
 
             {activeTab === "settings" && (
               <section className="w-full min-w-0">
-                <h2 className="mb-4 text-xl font-bold sm:text-2xl">
-                  Cafe Settings
-                </h2>
+                  <CafeSetting />
               </section>
             )}
 
