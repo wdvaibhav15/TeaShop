@@ -1,69 +1,3 @@
-// import React from "react";
-// import useSubscribers from "../hooks/useSubscribers";
-
-// const Subscribers = () => {
-//   const { subscribers, loading } = useSubscribers();
-
-//   if (loading) {
-//     return (
-//       <div className="p-6 text-center">
-//         Loading Subscribers...
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-6">
-
-//       <h1 className="text-3xl font-bold mb-6">
-//         Newsletter Subscribers
-//       </h1>
-
-//       <div className="overflow-x-auto rounded-xl border">
-
-//         <table className="w-full">
-
-//           <thead>
-//             <tr className="bg-emerald-900">
-//               <th className="p-3 text-left">#</th>
-//               <th className="p-3 text-left">Email</th>
-//               <th className="p-3 text-left">Subscribed At</th>
-//             </tr>
-//           </thead>
-
-//           <tbody>
-
-//             {subscribers.map((subscriber, index) => (
-//               <tr
-//                 key={subscriber._id}
-//                 className="border-t"
-//               >
-//                 <td className="p-3">
-//                   {index + 1}
-//                 </td>
-
-//                 <td className="p-3">
-//                   {subscriber.email}
-//                 </td>
-
-//                 <td className="p-3">
-//                   {new Date(
-//                     subscriber.createdAt
-//                   ).toLocaleDateString()}
-//                 </td>
-//               </tr>
-//             ))}
-
-//           </tbody>
-
-//         </table>
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Subscribers;
 
 import React from "react";
 import useSubscribers from "../hooks/useSubscribers";
@@ -116,32 +50,32 @@ const Subscribers = () => {
             {subscribers.map((subscriber, index) => (
               <div
                 key={subscriber._id}
-                className="min-w-0 rounded-xl border border-[#264436] bg-[#12231B] p-4 shadow-sm"
+                className="min-w-0 rounded-xl border border-[#264436] bg-[#12231B] p-4 shadow-sm transition-colors duration-200 hover:border-emerald-700/60"
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <span className="text-xs font-medium text-[#A2C4B7]">
                     Subscriber #{index + 1}
                   </span>
 
-                  <span className="shrink-0 rounded-full bg-emerald-900/60 px-2.5 py-1 text-xs text-emerald-200">
+                  <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-400">
                     Subscribed
                   </span>
                 </div>
 
-                <p className="mb-1 text-xs font-medium text-[#A2C4B7]">
+                <p className="mb-1 text-xs font-semibold text-teal-400">
                   Email Address
                 </p>
 
-                <p className="break-all text-sm font-semibold text-[#F3EFE6]">
+                <p className="break-all text-sm font-semibold text-white">
                   {subscriber.email}
                 </p>
 
-                <div className="mt-3 border-t border-[#264436] pt-3">
-                  <p className="mb-1 text-xs font-medium text-[#A2C4B7]">
+                <div className="mt-3 border-t border-emerald-900/60 pt-3">
+                  <p className="mb-1 text-xs font-semibold text-amber-400">
                     Subscribed At
                   </p>
 
-                  <p className="text-sm text-[#F3EFE6]">
+                  <p className="text-sm font-medium text-amber-100">
                     {subscriber.createdAt
                       ? new Date(
                           subscriber.createdAt
@@ -183,11 +117,11 @@ const Subscribers = () => {
                         {index + 1}
                       </td>
 
-                      <td className="max-w-[320px] break-all px-4 py-4 text-sm text-[#F3EFE6] lg:px-6">
+                      <td className="max-w-[320px] break-all px-4 py-4 text-sm font-semibold text-teal-300 lg:px-6">
                         {subscriber.email}
                       </td>
 
-                      <td className="whitespace-nowrap px-4 py-4 text-sm text-[#A2C4B7] lg:px-6">
+                      <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-amber-300 lg:px-6">
                         {subscriber.createdAt
                           ? new Date(
                               subscriber.createdAt

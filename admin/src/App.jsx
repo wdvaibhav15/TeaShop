@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 import AdminWelcome from "./pages/AdminWelcome";
 import Login from "./pages/Login";
-import Navbar from "./components/Navbar";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyOTP from "./components/VerifyOTP";
 import NewPass from "./components/NewPass";
@@ -59,7 +58,7 @@ const App = () => {
         }}
       />
 
-      <Navbar />
+      
 
       <main className="flex-1">
         <Routes>
