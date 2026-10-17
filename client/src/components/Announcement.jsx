@@ -60,7 +60,7 @@ const Announcement = () => {
             className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <User className="w-3.5 h-3.5" />
-            <span>Admin Login</span>
+            <span>Admin</span>
           </button>
 
         </div>

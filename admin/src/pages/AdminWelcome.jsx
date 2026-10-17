@@ -1,10 +1,5 @@
-
 import React from "react";
-import {
-  Coffee,
-  ArrowRight,
-  ShieldCheck,
-} from "lucide-react";
+import { Coffee, ArrowRight, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const AdminWelcome = () => {
@@ -12,7 +7,6 @@ const AdminWelcome = () => {
 
   return (
     <div className="min-h-screen bg-[#0A120E] text-[#F3EFE6] flex flex-col justify-between p-6 relative overflow-hidden font-sans">
-
       {/* Background Decorative Glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#1E3E30]/30 rounded-full blur-3xl pointer-events-none" />
 
@@ -75,30 +69,33 @@ const AdminWelcome = () => {
           </span>
         </div>
 
-        <div>
-          <span 
-          
-          className="text-[10px] sm:text-xs font-mono tracking-widest text-[#A1B8AD] uppercase bg-[#172D23]/60 px-3 py-1.5 rounded-full border border-[#264436] whitespace-nowrap">
-          Admin Portal
-        </span>
+        
+<div className="ml-auto flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+  <span
+    className="cursor-pointer whitespace-nowrap rounded-full border border-[#264436] bg-[#172D23]/60 px-3 py-1.5 font-mono text-[9px] tracking-widest text-[#A1B8AD] uppercase transition-all duration-300 hover:border-[#B77B3F] hover:bg-[#B77B3F] hover:text-[#14261E] sm:text-xs"
+  >
+    Admin Portal
+  </span>
 
-        <button 
-  onClick={() => window.location.href = import.meta.env.VITE_CLIENT_URL}
-  className="cursor-pointer ml-3 text-[10px] text-semibold sm:text-xs font-mono tracking-widest text-[#A1B8AD] uppercase bg-[#172D23]/60 hover:bg-[#B77B3F] hover:text-[#14261E] px-3 py-1.5 rounded-full border border-[#264436] whitespace-nowrap"
->
-  User Panel
-</button>
-        </div>
+  <button
+    onClick={() => {
+      window.location.href = import.meta.env.VITE_CLIENT_URL;
+    }}
+    className="cursor-pointer whitespace-nowrap rounded-full border border-[#264436] bg-[#172D23]/60 px-3 py-1.5 font-mono text-[9px] tracking-widest text-[#A1B8AD] uppercase transition-all duration-300 hover:border-[#B77B3F] hover:bg-[#B77B3F] hover:text-[#14261E] sm:text-xs"
+  >
+    User Panel
+  </button>
+</div>
+
       </header>
 
       {/* Main Content */}
       <main className="w-full max-w-2xl mx-auto text-center z-10 my-auto py-10 sm:py-0">
-
         {/* Animated Coffee Cup */}
         <div className="relative mx-auto mb-8 w-48 h-48 sm:w-60 sm:h-60 flex items-center justify-center">
-
           {/* Background Glow */}
-          <div className="coffee-glow absolute inset-5 rounded-full bg-[#C88A4B]/20 blur-2xl"
+          <div
+            className="coffee-glow absolute inset-5 rounded-full bg-[#C88A4B]/20 blur-2xl"
             style={{
               animation: "glowPulse 3s ease-in-out infinite",
             }}
@@ -132,7 +129,6 @@ const AdminWelcome = () => {
           >
             {/* Cup Body */}
             <div className="relative w-28 h-24 sm:w-36 sm:h-28 rounded-b-[2.5rem] rounded-t-lg bg-gradient-to-br from-[#F3E4C8] via-[#E5D7B7] to-[#C88A4B] shadow-[0_18px_35px_rgba(0,0,0,0.4)] border border-[#FDFBF7]/30">
-
               {/* Coffee Surface */}
               <div className="absolute -top-2 left-0 right-0 h-5 rounded-[50%] bg-[#2A1710] border-[4px] border-[#C88A4B] shadow-inner" />
 
@@ -178,16 +174,13 @@ const AdminWelcome = () => {
         <h1 className="text-4xl sm:text-5xl font-serif font-bold tracking-tight text-white mb-4 leading-tight">
           Welcome to
           <br />
-          <span className="text-[#E5D7B7]">
-            Camellia Leaf Management
-          </span>
+          <span className="text-[#E5D7B7]">Camellia Leaf Management</span>
         </h1>
 
         {/* Description */}
         <p className="text-base sm:text-lg text-[#A1B8AD] max-w-lg mx-auto leading-relaxed mb-4">
-          Streamline daily store operations, menu curation,
-          inventory tracking, and sales insights from one
-          secure hub.
+          Streamline daily store operations, menu curation, inventory tracking,
+          and sales insights from one secure hub.
         </p>
 
         {/* Login Button */}
@@ -206,8 +199,8 @@ const AdminWelcome = () => {
       {/* Footer */}
       <footer className="w-full max-w-5xl mx-auto text-center text-xs text-[#638071] z-10 pt-6 border-t border-[#264436]/40">
         <p>
-          © {new Date().getFullYear()} Camellia Leaf Artisanal Cafe System.
-          All rights reserved.
+          © {new Date().getFullYear()} Camellia Leaf Artisanal Cafe System. All
+          rights reserved.
         </p>
       </footer>
     </div>
