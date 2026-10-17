@@ -28,8 +28,8 @@ const feedbackSchema = new mongoose.Schema(
   }
 );
 
-const UserFeedBack =
+const UserFeedback =
   mongoose.models.UserFeedBack ||
-  mongoose.model("UserFeedBack", feedbackSchema);
+  mongoose.model("UserFeedback", feedbackSchema);
 
-export default UserFeedBack;
+export default UserFeedback;
