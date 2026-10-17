@@ -33,12 +33,28 @@ const Navbar = () => {
   const [userDropdown, setUserDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "light"
+    () => localStorage.getItem("theme") || "light"
   );
 
+  // Redux state
   const user = useSelector((state) => state.user?.user);
+
   const wishlistItems = useSelector(
     (state) => state.wishlist?.wishlistItems || []
+  );
+
+  const cartItems = useSelector(
+    (state) => state.cart?.cartItems || []
+  );
+
+  // Wishlist count
+  const wishlistCount = wishlistItems.length;
+
+  // Cart count includes each item's quantity
+  const cartCount = cartItems.reduce(
+    (total, item) =>
+      total + Number(item.quantity || 1),
+    0
   );
 
   const userDropdownRef = useRef(null);
@@ -71,7 +87,7 @@ const Navbar = () => {
     };
   }, []);
 
-  // Close menus when the route changes
+  // Close menus when route changes
   useEffect(() => {
     setUserDropdown(false);
     setMobileMenuOpen(false);
@@ -122,14 +138,17 @@ const Navbar = () => {
     "text-stone-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800 " +
     "dark:text-stone-200 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-400";
 
+  // Shared badge styling
+  const badgeClass =
+    "absolute -right-0.5 -top-0.5 flex h-5 min-w-5 " +
+    "items-center justify-center rounded-full bg-red-500 " +
+    "px-1 text-xs font-bold leading-none text-white";
+
   return (
     <header className="sticky top-8 z-40 w-full border-b border-stone-200/80 bg-stone-50/95 backdrop-blur-md transition-colors dark:border-stone-800 dark:bg-stone-950/95">
-
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
         {/* Main Navbar */}
         <div className="flex h-16 items-center justify-between gap-3">
-
           {/* Logo */}
           <Link
             to="/"
@@ -199,39 +218,48 @@ const Navbar = () => {
 
           {/* Right Action Icons */}
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-
-            {/* Wishlist */}
+            {/* Wishlist with Badge */}
             <Link
               to="/wishlist"
-              aria-label="Wishlist"
+              aria-label={`Wishlist: ${wishlistCount} items`}
               className="relative flex items-center justify-center rounded-full p-2 text-stone-700 transition-colors hover:bg-stone-100 hover:text-emerald-800 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-emerald-400"
             >
               <FaHeart size={21} />
 
-              {wishlistItems.length > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs text-white">
-                  {wishlistItems.length}
+              {wishlistCount > 0 && (
+                <span className={badgeClass}>
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
                 </span>
               )}
             </Link>
 
-            {/* Cart */}
+            {/* Cart with Badge */}
             <Link
               to="/cart"
-              aria-label="Cart"
-              className="flex items-center justify-center rounded-full p-2 text-stone-700 transition-colors hover:bg-stone-100 hover:text-emerald-800 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-emerald-400"
+              aria-label={`Cart: ${cartCount} items`}
+              className="relative flex items-center justify-center rounded-full p-2 text-stone-700 transition-colors hover:bg-stone-100 hover:text-emerald-800 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-emerald-400"
             >
               <ShoppingBag className="h-5 w-5" />
+
+              {cartCount > 0 && (
+                <span className={badgeClass}>
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
             </Link>
 
-            {/* User Dropdown */}
-            {/* User Dropdown - Desktop Only */}
-            <div className="relative hidden lg:block" ref={userDropdownRef}>
+            {/* User Dropdown - Desktop */}
+            <div
+              className="relative hidden lg:block"
+              ref={userDropdownRef}
+            >
               <button
                 type="button"
                 aria-expanded={userDropdown}
                 aria-haspopup="true"
-                onClick={() => setUserDropdown((prev) => !prev)}
+                onClick={() =>
+                  setUserDropdown((prev) => !prev)
+                }
                 className="flex cursor-pointer items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2 py-1.5 text-xs font-medium text-stone-700 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-300 sm:pr-2.5"
               >
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
@@ -251,7 +279,6 @@ const Navbar = () => {
 
               {userDropdown && (
                 <div className="absolute right-0 z-50 mt-2 w-56 rounded-2xl border border-stone-200 bg-white py-2 shadow-xl dark:border-stone-800 dark:bg-stone-900">
-
                   {!user ? (
                     <>
                       <Link
@@ -301,7 +328,7 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Working Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle */}
             <button
               type="button"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
@@ -319,7 +346,6 @@ const Navbar = () => {
                 <Menu className="h-6 w-6" />
               )}
             </button>
-
           </div>
         </div>
 
@@ -331,7 +357,6 @@ const Navbar = () => {
             className="border-t border-stone-200 py-4 dark:border-stone-800 lg:hidden"
           >
             <nav className="flex flex-col gap-1">
-
               <Link
                 to="/"
                 onClick={closeMobileMenu}
@@ -368,6 +393,7 @@ const Navbar = () => {
                 Contact
               </Link>
 
+              {/* Mobile Wishlist */}
               <Link
                 to="/wishlist"
                 onClick={closeMobileMenu}
@@ -375,13 +401,15 @@ const Navbar = () => {
               >
                 <Heart className="h-5 w-5" />
                 Wishlist
-                {wishlistItems.length > 0 && (
-                  <span className="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">
-                    {wishlistItems.length}
+
+                {wishlistCount > 0 && (
+                  <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
               </Link>
 
+              {/* Mobile Cart with Badge */}
               <Link
                 to="/cart"
                 onClick={closeMobileMenu}
@@ -389,9 +417,15 @@ const Navbar = () => {
               >
                 <ShoppingBag className="h-5 w-5" />
                 Cart
+
+                {cartCount > 0 && (
+                  <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
               </Link>
 
-              {/* Search on Mobile */}
+              {/* Mobile Search */}
               {menuPage && (
                 <div className="relative px-4 py-2">
                   <Search className="absolute left-7 top-5 h-4 w-4 text-stone-400" />
@@ -439,6 +473,7 @@ const Navbar = () => {
                       <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-300">
                         Signed in
                       </p>
+
                       <p className="truncate text-sm text-stone-600 dark:text-stone-300">
                         {user.email}
                       </p>
@@ -464,11 +499,9 @@ const Navbar = () => {
                   </button>
                 </>
               )}
-
             </nav>
           </div>
         )}
-
       </div>
     </header>
   );

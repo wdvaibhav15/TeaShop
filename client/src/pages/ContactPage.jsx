@@ -1,21 +1,29 @@
-import { useDispatch } from "react-redux";
-import { setFeedBackUser } from "../redux/userSlice.js";
-import React, { useState, useEffect } from "react";
 
-import { useSelector } from "react-redux";
-
-import axios from "axios";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
-import useCafeSettings from "../hooks/useCafeSettings";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  CheckCircle2,
+} from "lucide-react";
 import toast from "react-hot-toast";
+
+import useCafeSettings from "../hooks/useCafeSettings";
+import { setFeedBackUser } from "../redux/userSlice.js";
 
 const ContactPage = () => {
   const dispatch = useDispatch();
   const cafeData = useCafeSettings();
-
   const navigate = useNavigate();
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+
+  // FIX: Read the actual user object from Redux.
+  const user = useSelector((state) => state.user.user);
+  const isLoggedIn = Boolean(user);
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,12 +36,12 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Redirect only if no user is stored in Redux.
     if (!isLoggedIn) {
-    toast.error("Please log in to send an inquiry.");
-
-    navigate("/login");
-    return;
-  }
+      toast.error("Please log in to send an inquiry.");
+      navigate("/login");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -45,21 +53,26 @@ const ContactPage = () => {
           email,
           subject,
           message,
-        },
+        }
       );
 
       if (response.data.success) {
         setSubmitted(true);
-        console.log("Contact Form Response:", response.data);
-        const data = response.data.message;
-        dispatch(setFeedBackUser(data));
+
+        dispatch(setFeedBackUser(response.data.message));
+
+        toast.success("Inquiry sent successfully!");
+      } else {
+        toast.error(
+          response.data.message || "Failed to send inquiry."
+        );
       }
     } catch (error) {
       console.error("Contact Form Error:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
-          "Failed to send message. Please try again.",
+          "Failed to send message. Please try again."
       );
     } finally {
       setLoading(false);
@@ -86,13 +99,13 @@ const ContactPage = () => {
         </h1>
 
         <p className="text-stone-600 dark:text-stone-400 text-sm">
-          Have inquiries about rare cultivars, customized corporate gifts, or
-          wholesale inquiries? We welcome you warmly.
+          Have inquiries about rare cultivars, customized corporate
+          gifts, or wholesale inquiries? We welcome you warmly.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Contact Info */}
+        {/* Contact Information */}
         <div className="lg:col-span-5 space-y-8">
           <div className="bg-stone-50 dark:bg-stone-900/60 p-8 rounded-3xl border border-stone-200/80 dark:border-stone-800 space-y-6">
             <h3 className="font-serif-tea text-2xl font-bold text-stone-900 dark:text-stone-100">
@@ -102,9 +115,7 @@ const ContactPage = () => {
             <div className="space-y-4 text-sm text-stone-600 dark:text-stone-300">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-emerald-700 dark:text-emerald-400 mt-0.5" />
-                <div>
-                  <span>{cafeData?.cafeAddress}</span>
-                </div>
+                <span>{cafeData?.cafeAddress}</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -113,8 +124,9 @@ const ContactPage = () => {
                   <span className="font-bold text-stone-900 dark:text-stone-100 block">
                     Direct Email:
                   </span>
+
                   <a
-                    href={`mailto:${cafeData?.cafeEmail}`}
+                    href={`mailto:${cafeData?.cafeEmail || ""}`}
                     className="hover:text-emerald-700 underline"
                   >
                     {cafeData?.cafeEmail}
@@ -156,8 +168,8 @@ const ContactPage = () => {
             </h3>
 
             <p className="text-xs text-stone-500 mb-8">
-              We answer questions regarding steeping techniques, custom blends,
-              or international deliveries.
+              We answer questions regarding steeping techniques,
+              custom blends, or international deliveries.
             </p>
 
             {submitted ? (
@@ -169,7 +181,8 @@ const ContactPage = () => {
                 </h4>
 
                 <p className="text-xs text-stone-600 dark:text-stone-300">
-                  Thank you for contacting us. We'll get back to you soon.
+                  Thank you for contacting us. We'll get back to you
+                  soon.
                 </p>
 
                 <button

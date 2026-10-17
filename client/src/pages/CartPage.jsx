@@ -1,150 +1,3 @@
-// import React from "react";
-// import { Trash2, Plus, Minus } from "lucide-react";
-// import { useSelector, useDispatch } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import useRazorpay from "../hooks/useRazorpay";
-// import { removeFromCart, increaseQty, decreaseQty } from "../redux/cartSlice";
-// import toast from "react-hot-toast";
-
-// const CartPage = () => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const cartItems = useSelector((state) => state.cart.cartItems);
-//   const { user } = useSelector((state) => state.user);
-//   const { startPayment, loading: paymentLoading } = useRazorpay();
-//   const handleCheckout = () => {
-//     if (!user) {
-//       toast.error("Please log in to proceed to checkout");
-//       navigate("/login");
-//       return;
-//     }
-
-//     startPayment({
-//       coffeeId: cartItems[0]?._id,
-//       quantity: cartItems.reduce((total, item) => total + item.quantity, 0),
-//       amount: totalPrice,
-//       userId: user?._id || user?.id,
-//       title: `Cart Order (${cartItems.length} Items)`,
-//       image: cartItems[0]?.image || cartItems[0]?.imageUrl,
-//     });
-//   };
-
-//   const totalPrice = cartItems.reduce(
-//     (sum, item) => sum + item.price * item.quantity,
-//     0,
-//   );
-
-//   return (
-//     <div className="max-w-5xl mx-auto p-6">
-//       <h1 className="text-3xl font-bold mb-6">Shopping Cart</h1>
-
-//       {cartItems.length === 0 ? (
-//         <div className="text-center py-12">
-//           <h2 className="text-2xl font-semibold text-red-600 mb-3">
-//             ☕ Your cart is empty
-//           </h2>
-
-//           <p className="text-gray-500 mb-6">
-//             Explore our menu and add your favorite coffee or tea.
-//           </p>
-
-//           <button
-//             onClick={() => navigate("/menu")}
-//             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl cursor-pointer transition-colors"
-//           >
-//             Browse Menu
-//           </button>
-//         </div>
-//       ) : (
-//         <>
-//           <div className="space-y-4">
-//             {cartItems.map((item) => (
-//               <div
-//                 key={item._id}
-//                 className="flex items-center justify-between border rounded-xl p-4"
-//               >
-//                 {/* Product Info */}
-//                 <div className="flex items-center gap-4">
-//                   <img
-//                     src={
-//                       item.imageUrl ||
-//                       item.image ||
-//                       "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop"
-//                     }
-//                     alt={item.coffeeTitle || item.title || item.name}
-//                     className="w-20 h-20 rounded-lg object-cover"
-//                   />
-
-//                   <div>
-//                     <h3 className="font-semibold">
-//                       {item.coffeeTitle || item.title || item.name}
-//                     </h3>
-
-//                     <p className="text-sm text-gray-500">
-//                       {item.category || "Coffee"}
-//                     </p>
-
-//                     <p className="font-bold">₹{item.price}</p>
-//                   </div>
-//                 </div>
-
-//                 {/* Quantity Controls */}
-//                 <div className="flex items-center gap-3">
-//                   <button
-//                     onClick={() => dispatch(decreaseQty(item._id))}
-//                     className="p-2 border rounded hover:bg-gray-100"
-//                   >
-//                     <Minus size={14} />
-//                   </button>
-
-//                   <span className="font-medium">{item.quantity}</span>
-
-//                   <button
-//                     onClick={() => dispatch(increaseQty(item._id))}
-//                     className="p-2 border rounded hover:bg-gray-100"
-//                   >
-//                     <Plus size={14} />
-//                   </button>
-
-//                   <p className="font-bold w-24 text-right">
-//                     ₹{(item.price * item.quantity).toFixed(2)}
-//                   </p>
-
-//                   <button
-//                     onClick={() => dispatch(removeFromCart(item._id))}
-//                     className="text-red-500 hover:text-red-700"
-//                   >
-//                     <Trash2 size={18} />
-//                   </button>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-
-//           {/* Total */}
-//           <div className="mt-8 border-t pt-4 flex justify-between">
-//             <h2 className="text-xl font-bold">Subtotal</h2>
-
-//             <h2 className="text-xl font-bold">₹{totalPrice.toFixed(2)}</h2>
-//           </div>
-
-//           {/* Checkout Button */}
-//           <div className="mt-6 text-right">
-//             <button
-//               onClick={handleCheckout}
-//               disabled={paymentLoading}
-//               className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
-//             >
-//               {paymentLoading ? "Processing..." : "Proceed To Checkout"}
-//             </button>
-//           </div>
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default CartPage;
 
 import React from "react";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
@@ -162,6 +15,7 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Get cart items directly from Redux
   const cartItems = useSelector(
     (state) => state.cart?.cartItems || []
   );
@@ -170,23 +24,29 @@ const CartPage = () => {
     (state) => state.user || {}
   );
 
-  const { startPayment, loading: paymentLoading } = useRazorpay();
+  const { startPayment, loading: paymentLoading } =
+    useRazorpay();
 
   const DEFAULT_IMAGE =
     "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop";
 
-  // Calculate subtotal before checkout uses it
+  // Total number of items, including quantities
+  const totalQuantity = cartItems.reduce(
+    (total, item) =>
+      total + Number(item.quantity || 1),
+    0
+  );
+
+  // Calculate subtotal
   const totalPrice = cartItems.reduce(
     (sum, item) =>
-      sum + Number(item.price || 0) * Number(item.quantity || 1),
+      sum +
+      Number(item.price || 0) *
+        Number(item.quantity || 1),
     0
   );
 
-  const totalQuantity = cartItems.reduce(
-    (total, item) => total + Number(item.quantity || 1),
-    0
-  );
-
+  // Checkout handler
   const handleCheckout = async () => {
     if (!user) {
       toast.error("Please log in to proceed to checkout");
@@ -214,10 +74,13 @@ const CartPage = () => {
       });
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("Unable to start checkout. Please try again.");
+      toast.error(
+        "Unable to start checkout. Please try again."
+      );
     }
   };
 
+  // Remove product from cart
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
     toast.success("Item removed from cart");
@@ -227,18 +90,23 @@ const CartPage = () => {
     <main className="min-h-screen overflow-x-hidden bg-stone-950 text-white">
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
 
-        {/* Page Heading */}
+        {/* Page Heading and Cart Count Badge */}
         <div className="mb-7 sm:mb-9">
-          <h1 className="font-serif text-3xl font-bold uppercase tracking-wide text-white sm:text-4xl">
-            Shopping Cart
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-serif text-3xl font-bold uppercase tracking-wide text-white sm:text-4xl">
+              Shopping Cart
+            </h1>
 
-          {cartItems.length > 0 && (
-            <p className="mt-2 text-sm text-stone-400">
-              {totalQuantity}{" "}
-              {totalQuantity === 1 ? "item" : "items"} in your cart
-            </p>
-          )}
+            {/* Dynamic badge */}
+            <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-emerald-600 px-2 text-sm font-bold text-white">
+              {totalQuantity > 99 ? "99+" : totalQuantity}
+            </span>
+          </div>
+
+          <p className="mt-2 text-sm text-stone-400">
+            {totalQuantity}{" "}
+            {totalQuantity === 1 ? "item" : "items"} in your cart
+          </p>
         </div>
 
         {/* Empty Cart */}
@@ -251,8 +119,8 @@ const CartPage = () => {
             </h2>
 
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-stone-400 sm:text-base">
-              Discover our handcrafted coffee, artisanal teas, and
-              signature blends.
+              Discover our handcrafted coffee, artisanal
+              teas, and signature blends.
             </p>
 
             <button
@@ -359,7 +227,9 @@ const CartPage = () => {
                         <button
                           type="button"
                           aria-label={`Remove ${title} from cart`}
-                          onClick={() => handleRemove(item._id)}
+                          onClick={() =>
+                            handleRemove(item._id)
+                          }
                           className="flex h-9 w-9 items-center justify-center rounded-lg text-red-500 transition hover:bg-red-950/40 hover:text-red-400"
                         >
                           <Trash2 size={18} />
@@ -384,10 +254,11 @@ const CartPage = () => {
               </div>
 
               <p className="mt-2 text-right text-xs text-stone-400 sm:text-sm">
-                Shipping and any applicable taxes are calculated at checkout.
+                Shipping and any applicable taxes are
+                calculated at checkout.
               </p>
 
-              {/* Checkout */}
+              {/* Checkout Buttons */}
               <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <button
                   type="button"
@@ -400,7 +271,9 @@ const CartPage = () => {
                 <button
                   type="button"
                   onClick={handleCheckout}
-                  disabled={paymentLoading || cartItems.length === 0}
+                  disabled={
+                    paymentLoading || cartItems.length === 0
+                  }
                   className="w-full rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {paymentLoading

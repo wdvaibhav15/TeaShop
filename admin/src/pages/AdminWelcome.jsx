@@ -75,9 +75,19 @@ const AdminWelcome = () => {
           </span>
         </div>
 
-        <span className="text-[10px] sm:text-xs font-mono tracking-widest text-[#A1B8AD] uppercase bg-[#172D23]/60 px-3 py-1.5 rounded-full border border-[#264436] whitespace-nowrap">
+        <div>
+          <span 
+          
+          className="text-[10px] sm:text-xs font-mono tracking-widest text-[#A1B8AD] uppercase bg-[#172D23]/60 px-3 py-1.5 rounded-full border border-[#264436] whitespace-nowrap">
           Admin Portal
         </span>
+
+        <button 
+        onClick={() => window.location.href = 'http://localhost:5174/'}
+        className="cursor-pointer ml-3 text-[10px] text-semibold sm:text-xs font-mono tracking-widest text-[#A1B8AD] uppercase bg-[#172D23]/60 hover:bg-[#B77B3F] hover:text-[#14261E] px-3 py-1.5 rounded-full border border-[#264436] whitespace-nowrap">
+          User Panel
+        </button>
+        </div>
       </header>
 
       {/* Main Content */}
