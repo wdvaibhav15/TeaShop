@@ -1,6 +1,6 @@
 import Order from "../models/order.model.js";
 import Subscriber from "../models/subscriber.model.js";
-import Feedback from "../models/UserFeedBack.js";
+import Feedback from "../models/UserFeedback.js";
 
 export const getNotifications = async (req, res) => {
   try {

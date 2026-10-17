@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import Admin from "../models/Admin.js";
 import genToken from "../utils/token.js";
 import nodemailer from "nodemailer";
-import UserFeedBack from "../models/UserFeedBack.js";
+import UserFeedBack from "../models/UserFeedback.js";
 import Order from "../models/order.model.js";
 import Coffee from "../models/CoffeeCup.js";
 import Cafe from "../models/cafe.model.js";
