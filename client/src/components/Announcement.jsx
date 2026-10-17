@@ -21,27 +21,27 @@ const Announcement = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  
-
-  
+  const handleAdminRedirect = () => {
+    const adminUrl = import.meta.env.VITE_ADMIN_URL || "https://camellia-admin.vercel.app";
+    window.location.href = adminUrl;
+  };
 
   return (
     <div className="sticky top-0 z-50 h-8 w-full bg-emerald-900 text-stone-200 text-xs px-4 flex items-center border-b border-emerald-800/50 shadow-sm">
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
         
-          <div className="flex items-center gap-2 truncate">
-          <span>🌿 Free shipping on orders over ₹50</span>
-        </div>
+        {/* Left Side Message */}
         <div className="flex items-center gap-2 truncate">
           <span>🌿 Free shipping on orders over ₹50</span>
         </div>
 
+        {/* Right Side Actions */}
         <div className="flex items-center gap-4 text-[11px] font-medium ml-auto">
-          {/* Theme Toggle */}
           
-            <button
+          {/* Theme Toggle Button */}
+          <button
             onClick={toggleTheme}
-            className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
+            className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
             aria-label="Toggle dark mode"
             type="button"
           >
@@ -52,20 +52,17 @@ const Announcement = () => {
             )}
             <span>{theme === 'light' ? 'Dark' : 'Light'}</span>
           </button>
-          
 
-          {/* Administrator / User Toggle Button */}
+          {/* Admin Redirect Button */}
           <button
             type="button"
-            onClick={() => window.location.href = import.meta.env.VITE_ADMIN_URL}
-            className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
+            onClick={handleAdminRedirect}
+            className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
           >
-            
-              <span className="flex items-center gap-1"><User className="w-4 h-4" />Admin Login</span>
-            
-            
-            
+            <User className="w-3.5 h-3.5" />
+            <span>Admin Login</span>
           </button>
+
         </div>
       </div>
     </div>
