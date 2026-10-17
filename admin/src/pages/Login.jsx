@@ -120,15 +120,7 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="text-center text-xs text-stone-500 pt-2 border-t border-stone-100 dark:border-stone-800">
-          New to Camellia Leaf?{" "}
-          <Link
-            to="/registration"
-            className="font-bold text-emerald-800 dark:text-emerald-400 hover:underline"
-          >
-            Create an Account
-          </Link>
-        </div>
+        
       </div>
     </div>
   );
