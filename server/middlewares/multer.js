@@ -1,31 +1,28 @@
-
-// import fs from "fs";
-// import multer from "multer";
-
-// if (!fs.existsSync("./public/tempImages")) {
-//   fs.mkdirSync("./public/tempImages", { recursive: true });
-// }
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./public/tempImages");
-//   },
-
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix =
-//       Date.now() + "-" + Math.round(Math.random() * 1e9);
-
-//     const ext = file.originalname.substring(
-//       file.originalname.lastIndexOf(".")
-//     );
-
-//     cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-//   },
-// });
-
-// export const upload = multer({ storage });
+import fs from "fs";
 import multer from "multer";
 
-const storage = multer.memoryStorage();
+// Use Vercel's writable temporary directory (/tmp)
+const uploadDir = "/tmp/tempImages";
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+
+  filename: function (req, file, cb) {
+    const uniqueSuffix =
+      Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+    const ext = file.originalname.substring(
+      file.originalname.lastIndexOf(".")
+    );
+
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
 
 export const upload = multer({ storage });
