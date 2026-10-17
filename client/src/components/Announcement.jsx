@@ -57,7 +57,7 @@ const Announcement = () => {
           {/* Administrator / User Toggle Button */}
           <button
             type="button"
-            onClick={() => window.location.href = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174/'}
+            onClick={() => window.location.href = import.meta.env.VITE_ADMIN_URL}
             className="p-1 px-2 rounded-full hover:bg-emerald-800 text-emerald-200 transition-colors flex items-center gap-1"
           >
             
