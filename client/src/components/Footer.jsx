@@ -121,12 +121,12 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} storename. All rights reserved. Single-estate harvests.
           </div>
           <div className="flex items-center gap-4 text-stone-400">
-            <span>Stripe Encrypted</span>
+            <span>Razorpay Encrypted</span>
             <span>&bull;</span>
             <span>Cash On Delivery</span>
             <span>&bull;</span>
             <span className="flex items-center gap-1 text-emerald-400">
-              Steeped with <Heart className="w-3 h-3 fill-current text-rose-500" /> & Reverence
+              Made with passion <Heart className="w-3 h-3 fill-current text-rose-500" />by Vaibhav
             </span>
           </div>
         </div>

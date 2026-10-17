@@ -14,18 +14,15 @@ import Toast from "./components/Toast";
 // Pages
 import HomePage from "./pages/HomePage";
 import AboutUsPage from "./pages/AboutUsPage";
-import ShopPage from "./pages/ShopPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import ContactPage from "./pages/ContactPage";
 import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/CheckoutPage";
+
 import WishlistPage from "./pages/WishlistPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
-import PaymentSuccessPage from "./pages/PaymentSuccessPage";
-import PaymentFailurePage from "./pages/PaymentFailurePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import VerifyOTP from "./components/VerifyOTP";
 import NewPass from "./components/NewPass";
@@ -66,7 +63,7 @@ const AppContent = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/my-orders"element={<MyOrders />}/>
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
+          
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -78,8 +75,8 @@ const AppContent = () => {
 
           <Route path="/dashboard" element={<UserDashboardPage />} />
 
-          <Route path="/payment-success" element={<PaymentSuccessPage />} />
-          <Route path="/payment-failure" element={<PaymentFailurePage />} />
+          
+          
 
           
           <Route path="/review" element={<Review />} />
