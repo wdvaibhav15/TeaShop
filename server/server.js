@@ -12,7 +12,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
-import addCups from './routes/AddCups.js';
+import addCups from './routes/addCups.js';
 import paymentRoutes from "./routes/payment.routes.js";
 import cookieParser from "cookie-parser";
 import allOrdersRoutes from './routes/allOrdersRoutes.js';
