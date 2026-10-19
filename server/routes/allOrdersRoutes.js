@@ -1,15 +1,19 @@
-import express from 'express';
-import { getAllOrders, getUserOrdersOnly } from '../controllers/adminController.js';
-import { isAuthenticated } from '../middlewares/isAuthenticated.js';
+
+import express from "express";
+import {
+  getAllOrders,
+  getUserOrdersOnly,
+} from "../controllers/adminController.js";
+
+import { isAuthenticated } from "../middlewares/isAuthenticated.js";
+import { isAdmin } from "../middlewares/isAdmin.js";
+
 const router = express.Router();
 
-// admin
-router.get('/orders', isAuthenticated, getAllOrders);
+// Admin: fetch all customer orders
+router.get("/orders", isAuthenticated, isAdmin, getAllOrders);
 
-// Customer
-router.get("/user-orders",isAuthenticated, getUserOrdersOnly);
-
-
+// Customer: fetch only the logged-in customer's orders
+router.get("/user-orders", isAuthenticated, getUserOrdersOnly);
 
 export default router;
-

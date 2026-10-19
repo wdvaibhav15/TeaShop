@@ -1,3 +1,4 @@
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const allOrdersSlice = createSlice({
@@ -8,18 +9,19 @@ const allOrdersSlice = createSlice({
   },
 
   reducers: {
+    // Store all fetched orders
     setAllOrders: (state, action) => {
-      state.orders = action.payload;
+      state.orders = action.payload || [];
     },
+
+    // Remove an order by its ID
     removeOrder: (state, action) => {
       state.orders = state.orders.filter(
-        (order) => order.id !== action.payload
+        (order) => order._id !== action.payload
       );
-    
     },
   },
-}
-);
+});
 
 export const { setAllOrders, removeOrder } = allOrdersSlice.actions;
 

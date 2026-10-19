@@ -470,42 +470,77 @@ export const deleteFeedback = async (req, res) => {
   }
 };
 
-// GET ALL ORDERS
 
+// GET ALL ORDERS — ADMIN ONLY
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("coffeeId", "coffeeTitle")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    // Remove orders whose coffee has been deleted
-    const visibleOrders = orders.filter(
-      (order) => order.coffeeId !== null
-    );
-
-    const formattedOrders = visibleOrders.map((order) => ({
-      _id: order._id,
-      coffeeName: order.coffeeId.coffeeTitle,
-      quantity: order.quantity,
-      amount: order.amount,
-      paymentStatus: order.paymentStatus,
-      date: order.createdAt.toLocaleDateString(),
-      time: order.createdAt.toLocaleTimeString(),
+    // Do not discard orders when their coffee reference is missing.
+    const formattedOrders = orders.map((order) => ({
+      ...order,
+      coffeeName:
+        order.coffeeId?.coffeeTitle || "Deleted Coffee",
+      quantity: order.quantity ?? 1,
+      amount: Number(order.amount ?? 0),
+      paymentStatus: order.paymentStatus || "Pending",
+      date: order.createdAt
+        ? new Date(order.createdAt).toLocaleDateString("en-IN")
+        : "N/A",
+      time: order.createdAt
+        ? new Date(order.createdAt).toLocaleTimeString("en-IN")
+        : "N/A",
     }));
 
     return res.status(200).json({
       success: true,
       orders: formattedOrders,
+      totalOrders: formattedOrders.length,
     });
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Get all orders error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch all orders",
     });
   }
 };
+
+// GET ONLY THE LOGGED-IN CUSTOMER'S ORDERS
+export const getUserOrdersOnly = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authenticated user ID missing",
+      });
+    }
+
+    const orders = await Order.find({ userId })
+      .populate("coffeeId", "coffeeTitle")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      orders,
+      totalOrders: orders.length,
+    });
+  } catch (error) {
+    console.error("Get customer orders error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch your orders",
+    });
+  }
+};
+
 
 
 //  SET CAFE SETTINGS
@@ -570,26 +605,3 @@ export const getCafeSettings = async (req, res) => {
 };
 
 
-// GET ONLY THE LOGGED-IN CUSTOMER'S ORDERS
-export const getUserOrdersOnly = async (req, res) => {
-  try {
-    // Set by your authentication middleware
-    const userId = req.user._id;
-
-    const orders = await Order.find({ userId })
-      .populate("coffeeId", "coffeeTitle")
-      .sort({ createdAt: -1 });
-
-    return res.status(200).json({
-      success: true,
-      orders,
-    });
-  } catch (error) {
-    console.error("Get my orders error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch your orders",
-    });
-  }
-};
