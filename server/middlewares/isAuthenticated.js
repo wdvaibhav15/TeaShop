@@ -13,20 +13,14 @@ export const isAuthenticated = (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Authentication token missing",
+        message: "Authentication token missing.",
       });
     }
 
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET is missing on the server");
-
-      return res.status(500).json({
-        success: false,
-        message: "Server authentication configuration error",
-      });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
     const userId =
       decoded._id || decoded.id || decoded.userId;
@@ -34,22 +28,40 @@ export const isAuthenticated = (req, res, next) => {
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: "User ID missing from token",
+        message: "User ID missing from token.",
       });
     }
 
     req.user = {
       ...decoded,
       _id: userId,
+      role: decoded.role || "customer",
     };
 
     next();
   } catch (error) {
-    console.error("Authentication error:", error.message);
-
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token",
+      message: "Invalid or expired token.",
     });
   }
+};
+
+export const isAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required.",
+    });
+  }
+
+  if (String(req.user.role).toLowerCase() !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Admin access required.",
+      receivedRole: req.user.role,
+    });
+  }
+
+  next();
 };

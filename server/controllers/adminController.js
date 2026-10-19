@@ -55,9 +55,14 @@ import Cafe from "../models/cafe.model.js";
 // };
 
 // ADMIN LOGIN
+
 export const adminLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+
+    const { password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -66,41 +71,39 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    const user = await Admin.findOne({
-      email: email.trim().toLowerCase(),
-    });
+    // Authenticate against the Admin collection.
+    const admin = await Admin.findOne({ email });
 
-    if (!user) {
-      return res.status(400).json({
+    if (!admin) {
+      return res.status(401).json({
         success: false,
-        message: "Invalid email or password.",
+        message: "Invalid admin email or password.",
       });
     }
 
+    // Admin passwords must be stored as bcrypt hashes.
     const isMatch = await bcrypt.compare(
       password,
-      user.password
+      admin.password
     );
 
     if (!isMatch) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        message: "Invalid email or password.",
+        message: "Invalid admin email or password.",
       });
     }
 
-    // Verify the account is actually an administrator.
-    if (String(user.role || "").toLowerCase() !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "This account does not have administrator access.",
-      });
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing from environment variables.");
     }
 
+    // Explicitly include the admin role in the token.
     const token = jwt.sign(
       {
-        _id: user._id.toString(),
+        id: admin._id.toString(),
         role: "admin",
+        email: admin.email,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -109,18 +112,21 @@ export const adminLogin = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
     return res.status(200).json({
       success: true,
-      message: "Logged in successfully",
+      message: "Admin login successful.",
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
+        id: admin._id.toString(),
+        email: admin.email,
         role: "admin",
       },
     });
@@ -129,7 +135,7 @@ export const adminLogin = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Server error during login.",
+      message: "Server error during admin login.",
     });
   }
 };
