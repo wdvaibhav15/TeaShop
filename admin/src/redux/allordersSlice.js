@@ -9,20 +9,23 @@ const allOrdersSlice = createSlice({
   },
 
   reducers: {
-    // Store all fetched orders
     setAllOrders: (state, action) => {
-      state.orders = action.payload || [];
+      state.orders = Array.isArray(action.payload)
+        ? action.payload
+        : [];
     },
 
-    // Remove an order by its ID
     removeOrder: (state, action) => {
+      const orderId = action.payload;
+
       state.orders = state.orders.filter(
-        (order) => order._id !== action.payload
+        (order) => order._id !== orderId
       );
     },
   },
 });
 
-export const { setAllOrders, removeOrder } = allOrdersSlice.actions;
+export const { setAllOrders, removeOrder } =
+  allOrdersSlice.actions;
 
 export default allOrdersSlice.reducer;

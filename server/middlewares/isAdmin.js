@@ -7,10 +7,15 @@ export const isAdmin = (req, res, next) => {
     });
   }
 
-  if (req.user.role !== "admin") {
+  const role = String(req.user.role || "")
+    .trim()
+    .toLowerCase();
+
+  if (role !== "admin") {
     return res.status(403).json({
       success: false,
       message: "Admin access required",
+      receivedRole: role || null,
     });
   }
 

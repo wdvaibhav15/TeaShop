@@ -1,69 +1,38 @@
-// import jwt from "jsonwebtoken";
-
-// export const isAuthenticated = async (req, res, next) => {
-//   try {
-//     console.log("Cookies:", req.cookies);
-
-//     const token = req.cookies.token;
-
-//     console.log("Token:", token);
-
-//     if (!token) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "Unauthorized",
-//       });
-//     }
-
-//     const decoded = jwt.verify(
-//       token,
-//       process.env.JWT_SECRET
-//     );
-
-//     req.user = decoded;
-
-//     next();
-//   } catch (error) {
-//     console.log(error);
-
-//     return res.status(401).json({
-//       success: false,
-//       message: "Unauthorized",
-//     });
-//   }
-// };
 
 import jwt from "jsonwebtoken";
 
-export const isAuthenticated = async (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
   try {
-    // Support both cookie and Authorization header
     const authHeader = req.headers.authorization;
 
     const token =
       req.cookies?.token ||
       (authHeader?.startsWith("Bearer ")
-        ? authHeader.split(" ")[1]
+        ? authHeader.slice(7).trim()
         : null);
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: Token missing",
+        message: "Authentication token missing",
       });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach decoded JWT payload to the request
-    req.user = decoded;
+    const userId = decoded._id || decoded.id || decoded.userId;
 
-    if (!req.user._id && !req.user.id && !req.user.userId) {
+    if (!userId) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: Invalid token payload",
+        message: "User ID missing from token",
       });
     }
+
+    req.user = {
+      ...decoded,
+      _id: userId,
+    };
 
     next();
   } catch (error) {
@@ -71,7 +40,7 @@ export const isAuthenticated = async (req, res, next) => {
 
     return res.status(401).json({
       success: false,
-      message: "Unauthorized: Invalid or expired token",
+      message: "Invalid or expired token",
     });
   }
 };

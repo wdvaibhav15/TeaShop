@@ -471,6 +471,7 @@ export const deleteFeedback = async (req, res) => {
 };
 
 
+
 // GET ALL ORDERS — ADMIN ONLY
 export const getAllOrders = async (req, res) => {
   try {
@@ -479,17 +480,21 @@ export const getAllOrders = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    // Do not discard orders when their coffee reference is missing.
     const formattedOrders = orders.map((order) => ({
       ...order,
+
+      // Keep the original coffeeId field and expose a display name.
       coffeeName:
         order.coffeeId?.coffeeTitle || "Deleted Coffee",
+
       quantity: order.quantity ?? 1,
       amount: Number(order.amount ?? 0),
       paymentStatus: order.paymentStatus || "Pending",
+
       date: order.createdAt
         ? new Date(order.createdAt).toLocaleDateString("en-IN")
         : "N/A",
+
       time: order.createdAt
         ? new Date(order.createdAt).toLocaleTimeString("en-IN")
         : "N/A",
@@ -509,6 +514,7 @@ export const getAllOrders = async (req, res) => {
     });
   }
 };
+
 
 // GET ONLY THE LOGGED-IN CUSTOMER'S ORDERS
 export const getUserOrdersOnly = async (req, res) => {
@@ -540,6 +546,7 @@ export const getUserOrdersOnly = async (req, res) => {
     });
   }
 };
+
 
 
 
