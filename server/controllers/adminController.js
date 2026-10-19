@@ -1,3 +1,4 @@
+
 import bcrypt from "bcryptjs";
 import Admin from "../models/Admin.js";
 import genToken from "../utils/token.js";
@@ -6,8 +7,6 @@ import UserFeedBack from "../models/UserFeedback.js";
 import Order from "../models/order.model.js";
 import Coffee from "../models/CoffeeCup.js";
 import Cafe from "../models/cafe.model.js";
-
-
 
 // LOGIN REGISTRATION
 // export const adminRegister = async (req, res) => {
@@ -55,7 +54,6 @@ import Cafe from "../models/cafe.model.js";
 // };
 
 // ADMIN LOGIN
-
 export const adminLogin = async (req, res) => {
   try {
     const email = String(req.body.email || "")
@@ -676,5 +674,17 @@ export const getCafeSettings = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
