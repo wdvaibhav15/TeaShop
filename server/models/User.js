@@ -1,34 +1,46 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
 
-  password: {
-    type: String,
-    required: true
-  },
+    password: {
+      type: String,
+      required: true,
+    },
 
-  resetOTP: {
-    type: String,
-    default: null
-  },
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
 
-  otpExpire: {
-    type: Date,
-    default: null
+    resetOTP: {
+      type: String,
+      default: null,
+    },
+
+    otpExpire: {
+      type: Date,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-});
+);
 
 const User = mongoose.model("User", userSchema);
+
 export default User;

@@ -54,49 +54,88 @@ import Cafe from "../models/cafe.model.js";
 //   }
 // };
 
-// LOGIN LOGIC
+// ADMIN LOGIN
 export const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await Admin.findOne({ email });
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password." });
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required.",
+      });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password." });
-    }
-
-    const token = genToken(user._id);
-    res.cookie("token", token, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+    const user = await Admin.findOne({
+      email: email.trim().toLowerCase(),
     });
 
-    res.status(200).json({
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password.",
+      });
+    }
+
+    // Verify the account is actually an administrator.
+    if (String(user.role || "").toLowerCase() !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "This account does not have administrator access.",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        _id: user._id.toString(),
+        role: "admin",
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
       success: true,
       message: "Logged in successfully",
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: "admin",
+      },
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Admin login error:", error);
+
+    return res.status(500).json({
       success: false,
       message: "Server error during login.",
-      error: error.message,
     });
   }
 };
 
-// LOGOUT LOGIC
+// ADMIN LOGOUT
+
 export const adminLogout = async (req, res) => {
   try {
     await res.clearCookie("token");
