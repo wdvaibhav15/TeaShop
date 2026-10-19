@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,30 +22,37 @@ const useAllOrders = () => {
 
         const token = localStorage.getItem("token");
 
+        if (!token) {
+          throw new Error(
+            "Admin token not found in localStorage."
+          );
+        }
+
         const response = await axios.get(
           `${baseUrl}/api/orders/orders`,
           {
-            headers: token
-              ? { Authorization: `Bearer ${token}` }
-              : {},
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
             withCredentials: true,
           }
         );
 
         if (cancelled) return;
 
-        console.log("All orders response:", response.data);
-
-        if (response.data?.success) {
-          dispatch(
-            setAllOrders(response.data.orders ?? [])
-          );
-        } else {
-          console.error(
-            "Orders request failed:",
-            response.data?.message
+        if (response.data?.success !== true) {
+          throw new Error(
+            response.data?.message || "Failed to fetch orders."
           );
         }
+
+        const fetchedOrders = Array.isArray(response.data.orders)
+          ? response.data.orders
+          : [];
+
+        console.log("Fetched admin orders:", fetchedOrders);
+
+        dispatch(setAllOrders(fetchedOrders));
       } catch (error) {
         if (cancelled) return;
 
@@ -55,6 +61,8 @@ const useAllOrders = () => {
           data: error.response?.data,
           message: error.message,
         });
+
+        // Keep existing orders visible if a temporary request fails.
       }
     };
 
@@ -65,13 +73,13 @@ const useAllOrders = () => {
     };
   }, [dispatch]);
 
-  const totalRevenue = orders.reduce(
-    (total, order) => total + (Number(order.amount) || 0),
-    0
-  );
+  const totalRevenue = orders.reduce((total, order) => {
+    return total + (Number(order.amount) || 0);
+  }, 0);
 
   return {
     orders,
+    totalOrders: orders.length,
     totalRevenue,
   };
 };

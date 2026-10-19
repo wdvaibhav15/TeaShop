@@ -1,4 +1,3 @@
-
 import { createSlice } from "@reduxjs/toolkit";
 
 const allOrdersSlice = createSlice({
@@ -16,10 +15,10 @@ const allOrdersSlice = createSlice({
     },
 
     removeOrder: (state, action) => {
-      const orderId = action.payload;
+      const orderId = String(action.payload);
 
       state.orders = state.orders.filter(
-        (order) => order._id !== orderId
+        (order) => String(order._id) !== orderId
       );
     },
   },

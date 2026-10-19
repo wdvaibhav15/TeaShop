@@ -1,4 +1,3 @@
-
 import jwt from "jsonwebtoken";
 
 export const isAuthenticated = (req, res, next) => {
@@ -18,9 +17,19 @@ export const isAuthenticated = (req, res, next) => {
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing on the server");
+
+      return res.status(500).json({
+        success: false,
+        message: "Server authentication configuration error",
+      });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const userId = decoded._id || decoded.id || decoded.userId;
+    const userId =
+      decoded._id || decoded.id || decoded.userId;
 
     if (!userId) {
       return res.status(401).json({

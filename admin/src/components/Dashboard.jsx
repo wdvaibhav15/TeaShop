@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Coffee,
@@ -15,23 +14,20 @@ import useMenuItems from "../hooks/useMenuItems.js";
 import useSubscribers from "../hooks/useSubscribers.js";
 
 const Dashboard = () => {
-  const { orders = [], totalRevenue = 0 } = useAllOrders();
+  const { orders = [], totalRevenue = 0, totalOrders = 0 } = useAllOrders();
+
   const { items = [] } = useMenuItems();
   const { subscribers = [] } = useSubscribers();
 
   const [showAllOrders, setShowAllOrders] = useState(false);
 
-  const totalOrders = orders.length;
   const totalMenuItems = items.length;
   const subscribersCount = subscribers.length;
 
-  // Exclude orders whose coffee item has been deleted.
-  const visibleOrders = orders.filter((order) => {
-    if (order.coffeeId === null || order.coffee === null) {
-      return false;
-    }
-    return true;
-  });
+  // Do not filter out historical orders.
+  const visibleOrders = orders;
+
+  // Keep your existing topProducts array and stats configuration below.
 
   const topProducts = [
     { name: "Himalayan Emerald", sales: 245 },
@@ -137,30 +133,21 @@ const Dashboard = () => {
 
               <tbody>
                 {visibleOrders.slice(0, 6).map((order) => (
-                  <tr
-                    key={order._id}
-                    className="border-b border-stone-800 last:border-0"
-                  >
+                  <tr key={order._id}>
                     <td className="px-3 py-4 text-white">
-                      {order.quantity}
+                      {order.quantity ?? 1}
                     </td>
 
                     <td className="px-3 py-4 text-stone-300">
-                      {order.coffeeName || "Coffee"}
+                      {order.coffeeName || "Deleted Coffee"}
                     </td>
 
                     <td className="px-3 py-4 text-right font-semibold text-emerald-400">
-                      ₹{Number(order.amount || 0).toLocaleString("en-IN")}
+                      ₹{Number(order.amount ?? 0).toLocaleString("en-IN")}
                     </td>
 
                     <td className="px-3 py-4 text-center">
-                      <span
-                        className={`inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs ${
-                          order.paymentStatus === "PAID"
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-red-500/20 text-red-400"
-                        }`}
-                      >
+                      <span className="rounded-full px-3 py-1 text-xs bg-stone-800 text-stone-200">
                         {order.paymentStatus || "PENDING"}
                       </span>
                     </td>
@@ -230,9 +217,7 @@ const Dashboard = () => {
         <article className="min-w-0 rounded-2xl border border-stone-800 bg-stone-900 p-5 sm:p-6">
           <div className="flex items-center gap-3">
             <TrendingUp className="shrink-0 text-emerald-400" />
-            <h2 className="text-lg font-semibold text-white">
-              Monthly Growth
-            </h2>
+            <h2 className="text-lg font-semibold text-white">Monthly Growth</h2>
           </div>
 
           <h3 className="mt-4 text-3xl sm:text-4xl font-bold text-emerald-400">

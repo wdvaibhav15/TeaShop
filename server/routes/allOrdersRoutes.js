@@ -1,4 +1,3 @@
-
 import express from "express";
 
 import {
@@ -11,7 +10,7 @@ import { isAdmin } from "../middlewares/isAdmin.js";
 
 const router = express.Router();
 
-// Admin: fetch every customer's orders
+// Admin: fetch all customer orders
 router.get(
   "/orders",
   isAuthenticated,
@@ -19,7 +18,7 @@ router.get(
   getAllOrders
 );
 
-// Customer: fetch only the logged-in customer's orders
+// Customer: fetch only their own orders
 router.get(
   "/user-orders",
   isAuthenticated,

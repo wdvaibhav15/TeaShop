@@ -476,34 +476,54 @@ export const deleteFeedback = async (req, res) => {
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("coffeeId", "coffeeTitle")
+      .populate("coffeeId", "coffeeTitle name title")
       .sort({ createdAt: -1 })
       .lean();
 
-    const formattedOrders = orders.map((order) => ({
-      ...order,
+    const formattedOrders = orders.map((order) => {
+      const coffee = order.coffeeId;
 
-      // Keep the original coffeeId field and expose a display name.
-      coffeeName:
-        order.coffeeId?.coffeeTitle || "Deleted Coffee",
+      const createdAt = order.createdAt
+        ? new Date(order.createdAt)
+        : null;
 
-      quantity: order.quantity ?? 1,
-      amount: Number(order.amount ?? 0),
-      paymentStatus: order.paymentStatus || "Pending",
+      return {
+        ...order,
 
-      date: order.createdAt
-        ? new Date(order.createdAt).toLocaleDateString("en-IN")
-        : "N/A",
+        _id: String(order._id),
 
-      time: order.createdAt
-        ? new Date(order.createdAt).toLocaleTimeString("en-IN")
-        : "N/A",
-    }));
+        coffeeName:
+          coffee?.coffeeTitle ||
+          coffee?.name ||
+          coffee?.title ||
+          order.coffeeName ||
+          "Deleted Coffee",
+
+        quantity: Number(order.quantity ?? 1),
+        amount: Number(order.amount ?? 0),
+
+        paymentStatus: order.paymentStatus || "PENDING",
+
+        date:
+          createdAt && !Number.isNaN(createdAt.getTime())
+            ? createdAt.toLocaleDateString("en-IN")
+            : "N/A",
+
+        time:
+          createdAt && !Number.isNaN(createdAt.getTime())
+            ? createdAt.toLocaleTimeString("en-IN")
+            : "N/A",
+      };
+    });
 
     return res.status(200).json({
       success: true,
       orders: formattedOrders,
       totalOrders: formattedOrders.length,
+      totalRevenue: formattedOrders.reduce(
+        (total, order) => total + order.amount,
+        0
+      ),
     });
   } catch (error) {
     console.error("Get all orders error:", error);
@@ -515,30 +535,31 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-
 // GET ONLY THE LOGGED-IN CUSTOMER'S ORDERS
 export const getUserOrdersOnly = async (req, res) => {
   try {
-    const userId = req.user?._id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Authenticated user ID missing",
-      });
-    }
+    const userId = req.user._id;
 
     const orders = await Order.find({ userId })
-      .populate("coffeeId", "coffeeTitle")
-      .sort({ createdAt: -1 });
+      .populate("coffeeId", "coffeeTitle name title")
+      .sort({ createdAt: -1 })
+      .lean();
 
     return res.status(200).json({
       success: true,
-      orders,
-      totalOrders: orders.length,
+      orders: orders.map((order) => ({
+        ...order,
+        coffeeName:
+          order.coffeeId?.coffeeTitle ||
+          order.coffeeId?.name ||
+          order.coffeeId?.title ||
+          "Deleted Coffee",
+        quantity: Number(order.quantity ?? 1),
+        amount: Number(order.amount ?? 0),
+      })),
     });
   } catch (error) {
-    console.error("Get customer orders error:", error);
+    console.error("Get user orders error:", error);
 
     return res.status(500).json({
       success: false,
