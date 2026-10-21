@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllOrders } from "../redux/allordersSlice.js";
@@ -44,7 +44,6 @@ const useAllOrders = () => {
             withCredentials: true,
           }
         );
-        console.log("all Orders Response------------", response.data);
 
         if (cancelled) return;
 
@@ -61,11 +60,6 @@ const useAllOrders = () => {
           ? response.data.orders
           : [];
 
-        console.log(
-          "Fetched admin orders:",
-          fetchedOrders
-        );
-
         dispatch(setAllOrders(fetchedOrders));
       } catch (err) {
         if (cancelled) return;
@@ -75,7 +69,7 @@ const useAllOrders = () => {
           err.message ||
           "Failed to fetch admin orders.";
 
-        console.error("Error fetching all orders:", {
+        console.error("Error fetching orders:", {
           status: err.response?.status,
           data: err.response?.data,
           message: err.message,
@@ -96,17 +90,43 @@ const useAllOrders = () => {
     };
   }, [dispatch]);
 
-  const totalOrders = orders.length;
+  const {
+    confirmedOrders,
+    pendingOrders,
+    totalRevenue,
+  } = useMemo(() => {
+    const confirmed = orders.filter(
+      (order) =>
+        String(order.paymentStatus || "")
+          .trim()
+          .toUpperCase() === "PAID"
+    );
 
-  const totalRevenue = orders.reduce(
-    (total, order) =>
-      total + (Number(order.amount) || 0),
-    0
-  );
+    const pending = orders.filter(
+      (order) =>
+        String(order.paymentStatus || "")
+          .trim()
+          .toUpperCase() === "PENDING"
+    );
+
+    const revenue = confirmed.reduce(
+      (total, order) =>
+        total + (Number(order.amount) || 0),
+      0
+    );
+
+    return {
+      confirmedOrders: confirmed.length,
+      pendingOrders: pending.length,
+      totalRevenue: revenue,
+    };
+  }, [orders]);
 
   return {
     orders,
-    totalOrders,
+    totalOrders: orders.length,
+    confirmedOrders,
+    pendingOrders,
     totalRevenue,
     loading,
     error,

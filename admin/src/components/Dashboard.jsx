@@ -6,6 +6,8 @@ import {
   IndianRupee,
   TrendingUp,
   Star,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
 
 import useAllOrders from "../hooks/useAllOrders";
@@ -14,7 +16,13 @@ import useMenuItems from "../hooks/useMenuItems.js";
 import useSubscribers from "../hooks/useSubscribers.js";
 
 const Dashboard = () => {
-  const { orders = [], totalRevenue = 0, totalOrders = 0 } = useAllOrders();
+  const {
+  orders = [],
+  totalOrders = 0,
+  confirmedOrders = 0,
+  pendingOrders = 0,
+  totalRevenue = 0,
+} = useAllOrders();
 
   const { items = [] } = useMenuItems();
   const { subscribers = [] } = useSubscribers();
@@ -36,37 +44,54 @@ const Dashboard = () => {
     { name: "Herbal Bliss", sales: 143 },
   ];
 
-  const stats = [
-    {
-      title: "Total Products",
-      value: totalMenuItems,
-      Icon: Coffee,
-      color: "bg-emerald-600",
-    },
-    {
-      title: "Total Orders",
-      value: totalOrders,
-      Icon: ShoppingBag,
-      color: "bg-blue-600",
-    },
-    {
-      title: "Subscribers",
-      value: subscribersCount,
-      Icon: Users,
-      color: "bg-purple-600",
-    },
-    {
-      title: "Revenue",
-      value: Number(totalRevenue || 0).toLocaleString("en-IN", {
+ 
+const stats = [
+  {
+    title: "Total Products",
+    value: totalMenuItems,
+    Icon: Coffee,
+    color: "bg-emerald-600",
+  },
+  {
+    title: "Total Orders",
+    value: totalOrders,
+    Icon: ShoppingBag,
+    color: "bg-blue-600",
+  },
+  {
+    title: "Confirmed Orders",
+    value: confirmedOrders,
+    Icon: CheckCircle,
+    color: "bg-green-600",
+  },
+  {
+    title: "Pending Orders",
+    value: pendingOrders,
+    Icon: Clock,
+    color: "bg-amber-600",
+  },
+  {
+    title: "Subscribers",
+    value: subscribersCount,
+    Icon: Users,
+    color: "bg-purple-600",
+  },
+  {
+    title: "Revenue",
+    value: Number(totalRevenue || 0).toLocaleString(
+      "en-IN",
+      {
         style: "currency",
         currency: "INR",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }),
-      Icon: IndianRupee,
-      color: "bg-amber-600",
-    },
-  ];
+      }
+    ),
+    Icon: IndianRupee,
+    color: "bg-orange-600",
+  },
+];
+
 
   if (showAllOrders) {
     return <AllOrders />;
@@ -86,7 +111,7 @@ const Dashboard = () => {
       </header>
 
       {/* Stats: 1 column on mobile, 2 on tablet, 4 on desktop */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
         {stats.map(({ title, value, Icon, color }) => (
           <article
             key={title}
