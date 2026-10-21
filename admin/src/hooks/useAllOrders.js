@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllOrders } from "../redux/allordersSlice.js";
@@ -10,11 +11,17 @@ const useAllOrders = () => {
     (state) => state.allOrders?.orders ?? []
   );
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     let cancelled = false;
 
     const fetchAllOrders = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const baseUrl = (
           import.meta.env.VITE_CLIENT_API_URL ||
           "http://localhost:3000"
@@ -24,7 +31,7 @@ const useAllOrders = () => {
 
         if (!token) {
           throw new Error(
-            "Admin token not found in localStorage."
+            "Admin token not found. Please log in again."
           );
         }
 
@@ -37,32 +44,48 @@ const useAllOrders = () => {
             withCredentials: true,
           }
         );
+        console.log("all Orders Response------------", response.data);
 
         if (cancelled) return;
 
         if (response.data?.success !== true) {
           throw new Error(
-            response.data?.message || "Failed to fetch orders."
+            response.data?.message ||
+              "Failed to fetch orders."
           );
         }
 
-        const fetchedOrders = Array.isArray(response.data.orders)
+        const fetchedOrders = Array.isArray(
+          response.data.orders
+        )
           ? response.data.orders
           : [];
 
-        console.log("Fetched admin orders:", fetchedOrders);
+        console.log(
+          "Fetched admin orders:",
+          fetchedOrders
+        );
 
         dispatch(setAllOrders(fetchedOrders));
-      } catch (error) {
+      } catch (err) {
         if (cancelled) return;
 
+        const message =
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch admin orders.";
+
         console.error("Error fetching all orders:", {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message,
+          status: err.response?.status,
+          data: err.response?.data,
+          message: err.message,
         });
 
-        // Keep existing orders visible if a temporary request fails.
+        setError(message);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
@@ -73,14 +96,20 @@ const useAllOrders = () => {
     };
   }, [dispatch]);
 
-  const totalRevenue = orders.reduce((total, order) => {
-    return total + (Number(order.amount) || 0);
-  }, 0);
+  const totalOrders = orders.length;
+
+  const totalRevenue = orders.reduce(
+    (total, order) =>
+      total + (Number(order.amount) || 0),
+    0
+  );
 
   return {
     orders,
-    totalOrders: orders.length,
+    totalOrders,
     totalRevenue,
+    loading,
+    error,
   };
 };
 

@@ -6,7 +6,7 @@ import {
 } from "../controllers/adminController.js";
 
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
-import { isAdmin } from "../middlewares/isAdmin.js";
+
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ const router = express.Router();
 router.get(
   "/orders",
   isAuthenticated,
-  isAdmin,
+  
   getAllOrders
 );
 

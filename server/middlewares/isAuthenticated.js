@@ -1,6 +1,9 @@
-import jwt from "jsonwebtoken";
 
-export const isAuthenticated = (req, res, next) => {
+import jwt from "jsonwebtoken";
+import Admin from "../models/Admin.js";
+import User from "../models/User.js";
+
+export const isAuthenticated = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -23,7 +26,7 @@ export const isAuthenticated = (req, res, next) => {
     );
 
     const userId =
-      decoded._id || decoded.id || decoded.userId;
+      decoded.id || decoded._id || decoded.userId;
 
     if (!userId) {
       return res.status(401).json({
@@ -32,36 +35,60 @@ export const isAuthenticated = (req, res, next) => {
       });
     }
 
+    const tokenRole = String(decoded.role || "")
+      .trim()
+      .toLowerCase();
+
+    // Admin accounts are stored in the separate Admin collection.
+    if (
+      tokenRole === "admin" ||
+      tokenRole === "administrator"
+    ) {
+      const admin = await Admin.findById(userId).select(
+        "-password"
+      );
+
+      if (!admin) {
+        return res.status(401).json({
+          success: false,
+          message: "Admin account not found.",
+        });
+      }
+
+      req.user = {
+        _id: admin._id,
+        email: admin.email,
+        role: "admin",
+      };
+
+      return next();
+    }
+
+    // Regular customer accounts are stored in User.
+    const user = await User.findById(userId).select(
+      "-password"
+    );
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User account not found.",
+      });
+    }
+
     req.user = {
-      ...decoded,
-      _id: userId,
-      role: decoded.role || "customer",
+      _id: user._id,
+      email: user.email,
+      role: user.role || "customer",
     };
 
-    next();
+    return next();
   } catch (error) {
+    console.error("Authentication error:", error.message);
+
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token.",
+      message: "Invalid or expired authentication token.",
     });
   }
-};
-
-export const isAdmin = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      message: "Authentication required.",
-    });
-  }
-
-  if (String(req.user.role).toLowerCase() !== "admin") {
-    return res.status(403).json({
-      success: false,
-      message: "Admin access required.",
-      receivedRole: req.user.role,
-    });
-  }
-
-  next();
 };

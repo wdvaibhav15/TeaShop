@@ -1,3 +1,4 @@
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const allOrdersSlice = createSlice({
@@ -21,10 +22,17 @@ const allOrdersSlice = createSlice({
         (order) => String(order._id) !== orderId
       );
     },
+
+    clearAllOrders: (state) => {
+      state.orders = [];
+    },
   },
 });
 
-export const { setAllOrders, removeOrder } =
-  allOrdersSlice.actions;
+export const {
+  setAllOrders,
+  removeOrder,
+  clearAllOrders,
+} = allOrdersSlice.actions;
 
 export default allOrdersSlice.reducer;
